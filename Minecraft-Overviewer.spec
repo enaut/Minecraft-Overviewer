@@ -35,3 +35,8 @@ rm -rf %{buildroot}
 %{python_sitearch}/overviewer_core
 %{_bindir}/overviewer.py
 %doc README.rst COPYING.txt sample_config.py
+
+%changelog
+* Sat Apr 23 2016 Franz Dietrich <dietricf@informatik.uni-freiburg.de> 0.12-1
+- initial new package built with tito
+
