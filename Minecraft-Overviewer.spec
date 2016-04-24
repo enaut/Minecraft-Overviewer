@@ -8,8 +8,8 @@ Group: Development/Libraries
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Packager: Franz Dietrich <dietrich@teilgedanken.de>
 Url: http://overviewer.org/
-Requires: python-imaging, python2-numpy
-BuildRequires: python2-devel, python-imaging-devel, python2-numpy
+Requires: python-imaging, numpy
+BuildRequires: python2-devel, python-imaging-devel, numpy
 Provides: overviewer
 
 %description
