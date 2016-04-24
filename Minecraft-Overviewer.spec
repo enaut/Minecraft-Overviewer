@@ -1,7 +1,7 @@
 Summary: Generates large resolution images of a Minecraft map.
 Name: minecraft-overviewer
 Version: 0.12
-Release: 2%{?dist}
+Release: 3%{?dist}
 Source0: %{name}-%{version}.tar.gz
 License: GNU General Public License v3
 Group: Development/Libraries
@@ -44,3 +44,6 @@ rm -rf %{buildroot}
 %doc README.rst COPYING.txt sample_config.py
 
 %changelog
+* Sun Apr 24 2016 Franz Dietrich <dietricf@informatik.uni-freiburg.de> 0.12-3
+- new package built with tito
+
