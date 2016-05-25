@@ -26,8 +26,6 @@ env CFLAGS="$RPM_OPT_FLAGS" %{__python2} setup.py build
 %install
 %{__python} setup.py install -O1 --root=%{buildroot}
 ln -s %{_bindir}/overviewer.py %{buildroot}%{_bindir}/overviewer
-ln -s %{_bindir}/overviewer.py %{buildroot}%{_bindir}/overviewer-2
-ln -s %{_bindir}/overviewer.py %{buildroot}%{_bindir}/overviewer-2.7
 rm -rf %{buildroot}%{_defaultdocdir}/minecraft-overviewer
 
 %clean
@@ -39,8 +37,6 @@ rm -rf %{buildroot}
 %{python2_sitearch}/overviewer_core
 %{_bindir}/overviewer.py
 %{_bindir}/overviewer
-%{_bindir}/overviewer-2
-%{_bindir}/overviewer-2.7
 %doc README.rst COPYING.txt sample_config.py
 
 %changelog
