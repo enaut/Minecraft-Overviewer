@@ -1,7 +1,7 @@
 Summary: Generates large resolution images of a Minecraft map.
 Name: minecraft-overviewer
 Version: 0.12
-Release: 4%{?dist}
+Release: 5%{?dist}
 Source0: %{name}-%{version}.tar.gz
 License: GNU General Public License v3
 Group: Development/Libraries
@@ -40,6 +40,9 @@ rm -rf %{buildroot}
 %doc README.rst COPYING.txt sample_config.py
 
 %changelog
+* Wed May 25 2016 Franz Dietrich <dietricf@informatik.uni-freiburg.de> 0.12-5
+- Removing symlinks (dietricf@informatik.uni-freiburg.de)
+
 * Sun Apr 24 2016 Franz Dietrich <dietricf@informatik.uni-freiburg.de> 0.12-4
 - python2-numpy does not exist in F23 (dietricf@informatik.uni-freiburg.de)
 
