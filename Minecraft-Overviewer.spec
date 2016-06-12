@@ -1,7 +1,7 @@
 Summary: Generates large resolution images of a Minecraft map.
 Name: minecraft-overviewer
 Version: 0.12
-Release: 6%{?dist}
+Release: 7%{?dist}
 Source0: %{name}-%{version}.tar.gz
 License: GNU General Public License v3
 Group: Development/Libraries
@@ -40,6 +40,26 @@ rm -rf %{buildroot}
 %doc README.rst COPYING.txt sample_config.py
 
 %changelog
+* Sun Jun 12 2016 Franz Dietrich <enaut.w@googlemail.com> 0.12-7
+- bump overviewer.h version, textures.py version (aargri@gmail.com)
+- fixed typo in biomes.h (aargri@gmail.com)
+- update to 1.10 (dan@seattle.codeexception.com)
+- Revert temp & humidity changes and add missing biomes (dbergl@outlook.com)
+- Add new 1.7.2 biomes and update colors temp/humnidity was calculated so it
+  matched the pixel at the start of each biome as shown in the color template
+  (http://minecraft.gamepedia.com/File:Biomes1.7.2.png) TODO: switch to using
+  coordinates in the image instead of temp/humidity (dbergl@hotmail.com)
+- add new 1.10 blocks (dbergl@outlook.com)
+- Fix chorus plants (tazorax@gmail.com)
+- Add chorus plants and chorus flowers (tazorax@gmail.com)
+- Add missing pixels between slabs (Socolin@users.noreply.github.com)
+- Fix render when using rotation and crop (Socolin@users.noreply.github.com)
+- create filter identifiers from render name instead of region set
+  (kevin@kevinwchang.com)
+- Add region directory to corruption warnings (ovdev@fratti.ch)
+- fix typo from last commit, should work now (mc@680x0.com)
+- add support for advpng to optimizeimages.py (mc@680x0.com)
+
 * Wed May 25 2016 Franz Dietrich <dietricf@informatik.uni-freiburg.de> 0.12-6
 - Fix beetroots duplication (tazorax@gmail.com)
 - Implement beetroot crops Conflicts:     overviewer_core/textures.py
