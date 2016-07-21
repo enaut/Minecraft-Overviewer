@@ -1,7 +1,7 @@
 Summary: Generates large resolution images of a Minecraft map.
 Name: minecraft-overviewer
 Version: 0.12
-Release: 7%{?dist}
+Release: 8%{?dist}
 Source0: %{name}-%{version}.tar.gz
 License: GNU General Public License v3
 Group: Development/Libraries
@@ -40,6 +40,13 @@ rm -rf %{buildroot}
 %doc README.rst COPYING.txt sample_config.py
 
 %changelog
+* Thu Jul 21 2016 Franz Dietrich <dietrich@teilgedanken.de> 0.12-8
+- Update CONTRIBUTORS.rst information (ovdev@fratti.ch)
+- Update docs version and copyright year (ovdev@fratti.ch)
+- Make command line option docs more complete (ovdev@fratti.ch)
+- Add -q alias for --quiet to genPOI (ovdev@fratti.ch)
+- Update client jar version in documentation (ovdev@fratti.ch)
+
 * Sun Jun 12 2016 Franz Dietrich <enaut.w@googlemail.com> 0.12-7
 - bump overviewer.h version, textures.py version (aargri@gmail.com)
 - fixed typo in biomes.h (aargri@gmail.com)
