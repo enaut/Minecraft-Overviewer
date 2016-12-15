@@ -1,7 +1,7 @@
 Summary: Generates large resolution images of a Minecraft map.
 Name: minecraft-overviewer
 Version: 0.12
-Release: 9%{?dist}
+Release: 10%{?dist}
 Source0: %{name}-%{version}.tar.gz
 License: GNU General Public License v3
 Group: Development/Libraries
@@ -40,6 +40,15 @@ rm -rf %{buildroot}
 %doc README.rst COPYING.txt sample_config.py
 
 %changelog
+* Thu Dec 15 2016 Franz Dietrich <enaut.w@googlemail.com> 0.12-10
+- Enable gitlab CI (achin@eminence32.net)
+- optimizeimages: support pngnq-s9 (ovdev@fratti.ch)
+- genPOI: expose uuid value for filter functions (ovdev@fratti.ch)
+- genPOI/docs: Handle new sign id values (ovdev@fratti.ch)
+- Change shebang to python2 instead of python (ovdev@fratti.ch)
+- Update strings and items to 1.11 (mvndrstl@gmail.com)
+- Add new 1.11 blocks (mvndrstl@gmail.com)
+
 * Sat Aug 13 2016 Franz Dietrich <dietrich@teilgedanken.de> 0.12-9
 - Update text for 1.10 (code@manuelgu.eu)
 
