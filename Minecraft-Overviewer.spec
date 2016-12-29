@@ -1,7 +1,7 @@
 Summary: Generates large resolution images of a Minecraft map.
 Name: minecraft-overviewer
 Version: 0.12
-Release: 10%{?dist}
+Release: 11%{?dist}
 Source0: %{name}-%{version}.tar.gz
 License: GNU General Public License v3
 Group: Development/Libraries
@@ -40,6 +40,18 @@ rm -rf %{buildroot}
 %doc README.rst COPYING.txt sample_config.py
 
 %changelog
+* Thu Dec 29 2016 Franz Dietrich <dietrich@teilgedanken.de> 0.12-11
+- Apply same only/except tags to `remove_render` (achin@eminence32.net)
+- Improved gitlab CI which will remove renders when a branch is deleted
+  (achin@eminence32.net)
+- Some minor changes based on github comment feedback (achin@eminence32.net)
+- Be sure to exit with a non-zero code on build error (achin@eminence32.net)
+- Need to catch CorruptNBTError in both paths (tswsl1989@sucs.org)
+- Added some explanatory text about corrupt worlds (achin@eminence32.net)
+- Better error handling of errors when a world fails to open.
+  (achin@eminence32.net)
+- Updating linux build docs (achin@eminence32.net)
+
 * Thu Dec 15 2016 Franz Dietrich <enaut.w@googlemail.com> 0.12-10
 - Enable gitlab CI (achin@eminence32.net)
 - optimizeimages: support pngnq-s9 (ovdev@fratti.ch)
