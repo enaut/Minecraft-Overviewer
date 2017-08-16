@@ -1,7 +1,7 @@
 Summary: Generates large resolution images of a Minecraft map.
 Name: minecraft-overviewer
 Version: 0.12
-Release: 11%{?dist}
+Release: 12%{?dist}
 Source0: %{name}-%{version}.tar.gz
 License: GNU General Public License v3
 Group: Development/Libraries
@@ -40,6 +40,49 @@ rm -rf %{buildroot}
 %doc README.rst COPYING.txt sample_config.py
 
 %changelog
+* Wed Aug 16 2017 Franz Dietrich <dietrich@teilgedanken.de> 0.12-12
+- docs: various small updates to build instructions (ovdev@fratti.ch)
+- docs: Clarify Ubuntu/Debian install instructions (ovdev@fratti.ch)
+- Update minecraft version in gitlay-ci.yml to 1.12 (merten.fermont@gmail.com)
+- Change forgotten 1.11 to 1.12 in documentation (merten.fermont@gmail.com)
+- travis: Update MC version (ovdev@fratti.ch)
+- textures.py: Fix beds for 1.12 (ovdev@fratti.ch)
+- Update strings to 1.12 (ovdev@fratti.ch)
+- docs: add a section about how to contribute (ovdev@fratti.ch)
+- setup.py: remove workaround for CentOS 5 (ovdev@fratti.ch)
+- readme: add API key note, small fixes (ovdev@fratti.ch)
+- settingsValidators: clean up checkBadEscapes (ovdev@fratti.ch)
+- Remove unused imports (ovdev@fratti.ch)
+- docs: update copyright year to 2017 (ovdev@fratti.ch)
+- docs: optimise PNGs (ovdev@fratti.ch)
+- docs: fix two warnings during docs building (ovdev@fratti.ch)
+- docs: fix code block in signs.rst (ovdev@fratti.ch)
+- docs: add link to Twitter account to index.rst (ovdev@fratti.ch)
+- docs: Change some http:// URLs to https:// (ovdev@fratti.ch)
+- docs: remove remaining references to CentOS 5 (ovdev@fratti.ch)
+- Copy el6 rpms into a better home (achin@eminence32.net)
+- docs: remove CentOS 5 build instructions (ovdev@fratti.ch)
+- Re-enable render CI job in master branch (achin@eminence32.net)
+- Build and test rpm and deb repos during CI (achin@eminence32.net)
+- genpoi: query fs caps before using FileReplacer (ovdev@fratti.ch)
+- rcon: code style fixes (ovdev@fratti.ch)
+- logger: reduce pillow verbosity (ovdev@fratti.ch)
+- docs: fix oxipng formatting (ovdev@fratti.ch)
+- world: remove redundant hashing (ovdev@fratti.ch)
+- travis: stop testing for 2.6 (ovdev@fratti.ch)
+- optimizeimages: add oxipng support (ovdev@fratti.ch)
+- optimizeimages: code style fixes (ovdev@fratti.ch)
+- Remove memcached support (ovdev@fratti.ch)
+- Be more consistant in build artifact naming (achin@eminence32.net)
+- Add support for concrete powder (ovdev@fratti.ch)
+- Fix deprecated NumPy API warnings (ovdev@fratti.ch)
+- Add terracotta and concrete blocks (ovdev@fratti.ch)
+- Do an apt-get update during debian verification (achin@eminence32.net)
+- More work on gitlab CI (achin@eminence32.net)
+- Allow debug import (achin@eminence32.net)
+- Work on windows build with gitlab CI (achin@eminence32.net)
+- Replace `python` with `python2` (achin@eminence32.net)
+
 * Thu Dec 29 2016 Franz Dietrich <dietrich@teilgedanken.de> 0.12-11
 - Apply same only/except tags to `remove_render` (achin@eminence32.net)
 - Improved gitlab CI which will remove renders when a branch is deleted
