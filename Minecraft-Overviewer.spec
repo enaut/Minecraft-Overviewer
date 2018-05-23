@@ -1,7 +1,7 @@
 Summary: Generates large resolution images of a Minecraft map.
 Name: minecraft-overviewer
 Version: 0.12
-Release: 12%{?dist}
+Release: 13%{?dist}
 Source0: %{name}-%{version}.tar.gz
 License: GNU General Public License v3
 Group: Development/Libraries
@@ -40,6 +40,68 @@ rm -rf %{buildroot}
 %doc README.rst COPYING.txt sample_config.py
 
 %changelog
+* Wed May 23 2018 Franz Dietrich <dietrich@teilgedanken.de> 0.12-13
+- Remove broken marker centreing code (ovdev@fratti.ch)
+- Fix custom icons not showing up properly (ovdev@fratti.ch)
+- Increase the Overviewer C extension version (ovdev@fratti.ch)
+- Add 3 more touch-up points for smooth lighting (skaggsm333@gmail.com)
+- world: Don't call sys.exit here, raise something (ovdev@fratti.ch)
+- Fixes and improvements to leaflet marker support (achin@eminence32.net)
+- Set the attribution prefix (ovdev@fratti.ch)
+- Don't collapse marker group control (ovdev@fratti.ch)
+- Update leaflet to 1.3.1 (ovdev@fratti.ch)
+- Assume 32x32 marker size so they get centred (ovdev@fratti.ch)
+- Show marker group display names (ovdev@fratti.ch)
+- I don't make typos, no sir I don't (achin@eminence32.net)
+- Rename package to pkg in gitlab ci steps (achin@eminence32.net)
+- Updated to new gitlab registry URL (achin@eminence32.net)
+- Add testrepo step for ubuntu:artful (achin@eminence32.net)
+- During windows CI builds, use a specific Pillow (achin@eminence32.net)
+- Use sys.exit(1) to exit rather than throwing a ValueError
+  (supermarioryan@gmail.com)
+- Throw an error if the overviewer is running on a world saved on versions of
+  Minecraft newer than snapshot 17w47a (supermarioryan@gmail.com)
+- Fix gitlab CI (achin@eminence32.net)
+- travis: additionally fetch ImagingUtils.h (kevin@kevinwchang.com)
+- update Pillow header URLs in .travis.yml (kevin@kevinwchang.com)
+- fix pillow no longer allowing RGBA JPEG (kevin@kevinwchang.com)
+- Removing deprecated option in index.html : ?sensor=false (srumeu@manymore.fr)
+- Terracotta texture rotation fix (kenisis@hotmail.com)
+- Modernize Windows build instructions (kenisis@hotmail.com)
+- Fix slime algo by using integer for chunk coordinates. (dev.lyknode@cilg.org)
+- Added expiration of uuidcache entries (3db@3decibels.net)
+- leaflet: Reimplement coordinate box on bottom left (ovdev@fratti.ch)
+- Protect against optional marker variable (achin@eminence32.net)
+- Actually add the high-dpi icons, durr (ovdev@fratti.ch)
+- Remove old junk in web_assets (ovdev@fratti.ch)
+- Carpet-bombing code style fixes (ovdev@fratti.ch)
+- Re-implement map compass (ovdev@fratti.ch)
+- Move icon anchor to tip of icons (ovdev@fratti.ch)
+- Add retina size icons for spawn and location (ovdev@fratti.ch)
+- Centre map view on spawn marker if left-clicked (ovdev@fratti.ch)
+- Re-implement location marker (ovdev@fratti.ch)
+- WIP marker stuff (achin@eminence32.net)
+- Fix for IE11 (achin@eminence32.net)
+- Style fixes for the world selector control (achin@eminence32.net)
+- Update to latest version of leaflet 1.0.2 (achin@eminence32.net)
+- Initial reimplementation of url hash updating (achin@eminence32.net)
+- Re-implement configurable bgcolor (ovdev@fratti.ch)
+- Fix errorTileUrl for JPEG tilesets (ovdev@fratti.ch)
+- Get rid of overviewer.gmap, move code into util (ovdev@fratti.ch)
+- Add tset config to leaflet layer, refactor marker (ovdev@fratti.ch)
+- Re-implement spawn marker (ovdev@fratti.ch)
+- Set errorTileUrl to blank.png (ovdev@fratti.ch)
+- Replace mentions of Google Maps in documentation (ovdev@fratti.ch)
+- Misc leaflet fixes (achin@eminence32.net)
+- Add replacement for the location marker (ovdev@fratti.ch)
+- Add replacement for home marker, add icon_src dir (ovdev@fratti.ch)
+- Added world switcher control (achin@eminence32.net)
+- Include licnese information into jquery and leafjet js files
+  (achin@eminence32.net)
+- Adjust README.rst to remove mentions of GMaps API (ovdev@fratti.ch)
+- Initial commit to drop gmaps and to add support for leaflet
+  (achin@eminence32.net)
+
 * Wed Aug 16 2017 Franz Dietrich <dietrich@teilgedanken.de> 0.12-12
 - docs: various small updates to build instructions (ovdev@fratti.ch)
 - docs: Clarify Ubuntu/Debian install instructions (ovdev@fratti.ch)
