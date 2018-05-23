@@ -11,13 +11,13 @@ variables:
   MC_VERSION: "1.12"
 
 build:linux:
-  image: code.em32.net:14567/overviewer/minecraft-overviewer:base
+  image: registry.code.em32.net/overviewer/minecraft-overviewer:base
   stage: build
   dependencies: []
   tags:
     - docker
   cache:
-    key: "$CI_BUILD_REF_NAME/$CI_PIPELINE_ID/linuxbuild"
+    key: "$CI_BUILD_REF_NAME-$CI_PIPELINE_ID-linuxbuild"
     paths:
       - overviewer_core/c_overviewer.so
       - overviewer_core/overviewer_version.py
@@ -36,15 +36,15 @@ build:windows:
     - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
     - set DISTUTILS_USE_SDK=1
     - set MSSdk=1
-    - set PIL_INCLUDE_DIR=c:\devel\pillow\libImaging
+    - set PIL_INCLUDE_DIR=c:\devel\pillow\src\libImaging
     - c:\Python27\python.exe c:\devel\virtualenv\virtualenv.py ci_env
-    - ci_env\scripts\pip.exe install numpy Pillow
+    - ci_env\scripts\pip.exe install numpy Pillow==5.1.0
     - ci_env\Scripts\python.exe setup.py build
     - ci_env\Scripts\python.exe overviewer.py --verbose --version
 
 
 build:docs:
-  image: code.em32.net:14567/overviewer/minecraft-overviewer:base
+  image: registry.code.em32.net/overviewer/minecraft-overviewer:base
   stage: build
   dependencies: []
   tags:
@@ -59,13 +59,13 @@ build:docs:
       - docs/_build/html/
 
 test:
-  image: code.em32.net:14567/overviewer/minecraft-overviewer:base
+  image: registry.code.em32.net/overviewer/minecraft-overviewer:base
   stage: test
   dependencies: []
   tags:
     - docker
   cache:
-    key: "$CI_BUILD_REF_NAME/$CI_PIPELINE_ID/linuxbuild"
+    key: "$CI_BUILD_REF_NAME-$CI_PIPELINE_ID-linuxbuild"
     paths:
       - overviewer_core/c_overviewer.so
       - overviewer_core/overviewer_version.py
@@ -77,13 +77,13 @@ test:
 
 
 render:
-  image: code.em32.net:14567/overviewer/minecraft-overviewer:base
+  image: registry.code.em32.net/overviewer/minecraft-overviewer:base
   stage: test
   dependencies: []
   tags:
     - docker
   cache:
-    key: "$CI_BUILD_REF_NAME/$CI_PIPELINE_ID/linuxbuild"
+    key: "$CI_BUILD_REF_NAME-$CI_PIPELINE_ID-linuxbuild"
     paths:
       - overviewer_core/c_overviewer.so
       - overviewer_core/overviewer_version.py
@@ -104,8 +104,8 @@ render:
 
 
 # Builds a source package
-package:src:
-  image: code.em32.net:14567/overviewer/minecraft-overviewer:base
+pkg:src:
+  image: registry.code.em32.net/overviewer/minecraft-overviewer:base
   stage: package
   dependencies: []
   tags:
@@ -119,8 +119,8 @@ package:src:
     paths:
       - Minecraft-Overviewer*.tar.gz
 
-package:centos7rpm:
-  image: code.em32.net:14567/overviewer/minecraft-overviewer:centos7
+pkg:centos7rpm:
+  image: registry.code.em32.net/overviewer/minecraft-overviewer:centos7
   stage: package
   dependencies: []
   tags:
@@ -141,8 +141,8 @@ package:centos7rpm:
     paths:
       - Minecraft-Overviewer*.x86_64.rpm
 
-package:centos7-32rpm:
-  image: code.em32.net:14567/overviewer/minecraft-overviewer:centos7
+pkg:centos7-32rpm:
+  image: registry.code.em32.net/overviewer/minecraft-overviewer:centos7
   stage: package
   dependencies: []
   tags:
@@ -167,8 +167,8 @@ package:centos7-32rpm:
       - Minecraft-Overviewer*.i*86.rpm
 
 # Note that even though we are building a centos6 rpm, we can still use the centos7 docker image
-package:centos6rpm:
-  image: code.em32.net:14567/overviewer/minecraft-overviewer:centos7
+pkg:centos6rpm:
+  image: registry.code.em32.net/overviewer/minecraft-overviewer:centos7
   stage: package
   dependencies: []
   tags:
@@ -192,8 +192,8 @@ package:centos6rpm:
     paths:
       - Minecraft-Overviewer*.x86_64.rpm
 
-package:debian64:
-  image: code.em32.net:14567/overviewer/minecraft-overviewer:debian64
+pkg:debian64:
+  image: registry.code.em32.net/overviewer/minecraft-overviewer:debian64
   stage: package
   dependencies: []
   tags:
@@ -214,7 +214,7 @@ package:debian64:
       - minecraft-overviewer*.deb
 
 
-package:win64:
+pkg:win64:
   stage: package
   dependencies: []
   tags:
@@ -223,9 +223,9 @@ package:win64:
     - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
     - set DISTUTILS_USE_SDK=1
     - set MSSdk=1
-    - set PIL_INCLUDE_DIR=c:\devel\pillow\libImaging
+    - set PIL_INCLUDE_DIR=c:\devel\pillow\src\libImaging
     - c:\Python27\python.exe c:\devel\virtualenv\virtualenv.py ci_env
-    - ci_env\scripts\pip.exe install numpy Pillow pyinstaller sphinx
+    - ci_env\scripts\pip.exe install numpy Pillow==5.1.0 pyinstaller sphinx
     - ci_env\Scripts\python.exe setup.py build
     - copy build-tools\overviewer.spec .
     - ci_env\Scripts\pyinstaller.exe overviewer.spec
@@ -238,7 +238,7 @@ package:win64:
     paths:
       - overviewer-win64-*.zip
 
-package:win32:
+pkg:win32:
   stage: package
   dependencies: []
   tags:
@@ -247,9 +247,9 @@ package:win32:
     - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
     - set DISTUTILS_USE_SDK=1
     - set MSSdk=1
-    - set PIL_INCLUDE_DIR=c:\devel\pillow\libImaging
+    - set PIL_INCLUDE_DIR=c:\devel\pillow\src\libImaging
     - "\"c:\\Python27 (x86)\\python.exe\" c:\\devel\\virtualenv\\virtualenv.py ci_env"
-    - ci_env\scripts\pip.exe install numpy Pillow pyinstaller sphinx
+    - ci_env\scripts\pip.exe install numpy Pillow==5.1.0 pyinstaller sphinx
     - ci_env\Scripts\python.exe setup.py build
     - copy build-tools\overviewer.spec .
     - ci_env\Scripts\pyinstaller.exe overviewer.spec
@@ -263,12 +263,12 @@ package:win32:
       - overviewer-win32-*.zip
 
 verify:centos7:
-  image: code.em32.net:14567/overviewer/minecraft-overviewer:centos7-verify
+  image: registry.code.em32.net/overviewer/minecraft-overviewer:centos7-verify
   stage: verify
   tags:
     - docker
   dependencies:
-    - package:centos7rpm
+    - pkg:centos7rpm
   script:
     - ls -l *.rpm
     - ls -l
@@ -287,7 +287,7 @@ verify:debian64:
   tags:
     - docker
   dependencies:
-    - package:debian64
+    - pkg:debian64
   script:
     - apt-get -y update
     - apt-get -y install wget git
@@ -324,13 +324,13 @@ deploy:builds:
     - deploy
   dependencies:
     - build:docs
-    - package:src
-    - package:centos7rpm
-    - package:centos7-32rpm
-    - package:centos6rpm
-    - package:debian64
-    - package:win64
-    - package:win32
+    - pkg:src
+    - pkg:centos7rpm
+    - pkg:centos7-32rpm
+    - pkg:centos6rpm
+    - pkg:debian64
+    - pkg:win64
+    - pkg:win32
   script:
     - ls -ltr
     - mkdir -p /builds/$CI_BUILD_REF_SLUG/$CI_BUILD_ID/
@@ -347,10 +347,10 @@ deploy:repos:
   only:
     - master
   dependencies:
-    - package:centos7rpm
-    - package:centos7-32rpm
-    - package:centos6rpm
-    - package:debian64
+    - pkg:centos7rpm
+    - pkg:centos7-32rpm
+    - pkg:centos6rpm
+    - pkg:debian64
   script:
     - ls -ltr
     - dpkg-sig -g '--use-agent --batch --no-tty' --sign builder *.deb
@@ -469,6 +469,23 @@ repo:stretch:
 
 repo:wheezy:
   image: debian:wheezy
+  stage: testrepo
+  dependencies: []
+  tags:
+    - docker
+  only:
+    - master
+  script:
+    - apt-get -y update
+    - apt-get -y install wget
+    - wget -O - http://overviewer.org/debian_new/overviewer.gpg.asc | apt-key add -
+    - echo 'deb http://overviewer.org/debian_new ./' >> /etc/apt/sources.list
+    - apt-get -y update
+    - apt-get -y install minecraft-overviewer
+    - overviewer.py --verbose --version
+
+repo:artful:
+  image: ubuntu:artful
   stage: testrepo
   dependencies: []
   tags:
