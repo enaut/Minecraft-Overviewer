@@ -8,8 +8,6 @@
 <meta name="generator" content="Minecraft-Overviewer {version}" />
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 
-<script type="text/javascript" src="jquery.min.js"></script>
-
 <script type="text/javascript" src="overviewerConfig.js"></script>
 <script type="text/javascript" src="overviewer.js"></script>
 <script type="text/javascript" src="baseMarkers.js"></script>
@@ -22,11 +20,10 @@
 
 <!-- Generated at: {time} -->
 <body onload="overviewer.util.initialize()">
- <div id="mcmap">
-     <div id="NoJSWarning" style="color:white; background-color:black">
-         If you can see this message, there is likely a problem loading the Overviewer javascript components.
-         Check the javascript console for error messages.
-     </div>
- </div>
+    <noscript style="color:white; background-color:black">
+        If you can see this message, there is likely a problem loading the Overviewer JavaScript components.
+        Check the JavaScript console for error messages.
+    </noscript>
+    <div id="mcmap"></div>
 </body>
 </html>
