@@ -15,7 +15,7 @@ Provides: overviewer
 %description
 The Minecraft Overviewer is a command-line tool for rendering high-resolution
 maps of Minecraft worlds. It generates a set of static html and image files and
-uses the Google Maps API to display a nice interactive map.
+uses the Leaflet viewer to display an interactive map.
 
 %prep
 %setup
