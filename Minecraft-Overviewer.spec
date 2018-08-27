@@ -1,4 +1,4 @@
-Summary: Generates large resolution images of a Minecraft map.
+Summary: Generates a map viewable with a webrowser.
 Name: minecraft-overviewer
 Version: 0.12
 Release: 16%{?dist}
