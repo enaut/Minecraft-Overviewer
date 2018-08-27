@@ -1,7 +1,7 @@
 Summary: Generates a map viewable with a webrowser.
 Name: minecraft-overviewer
 Version: 0.12
-Release: 16%{?dist}
+Release: 17%{?dist}
 Source0: %{name}-%{version}.tar.gz
 License: GNU General Public License v3
 Group: Development/Libraries
@@ -40,6 +40,10 @@ rm -rf %{buildroot}
 %doc README.rst COPYING.txt sample_config.py
 
 %changelog
+* Mon Aug 27 2018 Franz Dietrich <dietrich@teilgedanken.de> 0.12-17
+- using python2 instead of python (dietrich@teilgedanken.de)
+- simple change (dietrich@teilgedanken.de)
+
 * Mon Aug 27 2018 Franz Dietrich <dietrich@teilgedanken.de> 0.12-16
 - changing to leaflet (dietrich@teilgedanken.de)
 
