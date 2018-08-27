@@ -24,7 +24,7 @@ uses the Leaflet viewer to display an interactive map.
 env CFLAGS="$RPM_OPT_FLAGS" %{__python2} setup.py build
 
 %install
-%{__python} setup.py install -O1 --root=%{buildroot}
+%{__python2} setup.py install -O1 --root=%{buildroot}
 ln -s %{_bindir}/overviewer.py %{buildroot}%{_bindir}/overviewer
 rm -rf %{buildroot}%{_defaultdocdir}/minecraft-overviewer
 
