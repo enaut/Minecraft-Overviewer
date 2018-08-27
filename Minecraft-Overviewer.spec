@@ -1,7 +1,7 @@
 Summary: Generates large resolution images of a Minecraft map.
 Name: minecraft-overviewer
 Version: 0.12
-Release: 14%{?dist}
+Release: 15%{?dist}
 Source0: %{name}-%{version}.tar.gz
 License: GNU General Public License v3
 Group: Development/Libraries
@@ -40,6 +40,9 @@ rm -rf %{buildroot}
 %doc README.rst COPYING.txt sample_config.py
 
 %changelog
+* Mon Aug 27 2018 Franz Dietrich <dietrich@teilgedanken.de> 0.12-15
+- adding gcc to build depends (dietrich@teilgedanken.de)
+
 * Mon Aug 27 2018 Franz Dietrich <dietrich@teilgedanken.de> 0.12-14
 - Fix missing titles for markers (cl0ne@mithril.org.ua)
 - Remove trailing whitespaces (r15ch13+git@gmail.com)
