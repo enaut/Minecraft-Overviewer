@@ -1,7 +1,7 @@
 Summary: Generates large resolution images of a Minecraft map.
 Name: minecraft-overviewer
 Version: 0.12
-Release: 13%{?dist}
+Release: 14%{?dist}
 Source0: %{name}-%{version}.tar.gz
 License: GNU General Public License v3
 Group: Development/Libraries
@@ -40,6 +40,15 @@ rm -rf %{buildroot}
 %doc README.rst COPYING.txt sample_config.py
 
 %changelog
+* Mon Aug 27 2018 Franz Dietrich <dietrich@teilgedanken.de> 0.12-14
+- Fix missing titles for markers (cl0ne@mithril.org.ua)
+- Remove trailing whitespaces (r15ch13+git@gmail.com)
+- Remove jQuery and underscore dependencies (r15ch13+git@gmail.com)
+- Use <noscript> to display message when JavaScript is disabled
+  (r15ch13+git@gmail.com)
+- issues-1411: Block Addition: Add inverted daylight sensor.
+  (karl.kuhn@hmhco.com)
+
 * Wed May 23 2018 Franz Dietrich <dietrich@teilgedanken.de> 0.12-13
 - Remove broken marker centreing code (ovdev@fratti.ch)
 - Fix custom icons not showing up properly (ovdev@fratti.ch)
