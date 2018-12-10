@@ -1,7 +1,7 @@
 Summary: Generates a map viewable with a webrowser.
 Name: minecraft-overviewer
 Version: 0.12
-Release: 17%{?dist}
+Release: 18%{?dist}
 Source0: %{name}-%{version}.tar.gz
 License: GNU General Public License v3
 Group: Development/Libraries
@@ -40,6 +40,95 @@ rm -rf %{buildroot}
 %doc README.rst COPYING.txt sample_config.py
 
 %changelog
+* Mon Dec 10 2018 Franz Dietrich <dietrich@teilgedanken.de> 0.12-18
+- Automatic commit of package [minecraft-overviewer] minor release [0.12-17].
+  (dietrich@teilgedanken.de)
+- using python2 instead of python (dietrich@teilgedanken.de)
+- simple change (dietrich@teilgedanken.de)
+- Automatic commit of package [minecraft-overviewer] minor release [0.12-16].
+  (dietrich@teilgedanken.de)
+- changing to leaflet (dietrich@teilgedanken.de)
+- Automatic commit of package [minecraft-overviewer] minor release [0.12-15].
+  (dietrich@teilgedanken.de)
+- adding gcc to build depends (dietrich@teilgedanken.de)
+- Automatic commit of package [minecraft-overviewer] minor release [0.12-14].
+  (dietrich@teilgedanken.de)
+- Automatic commit of package [minecraft-overviewer] minor release [0.12-13].
+  (dietrich@teilgedanken.de)
+- Automatic commit of package [minecraft-overviewer] minor release [0.12-12].
+  (dietrich@teilgedanken.de)
+- Automatic commit of package [minecraft-overviewer] minor release [0.12-11].
+  (dietrich@teilgedanken.de)
+- Automatic commit of package [minecraft-overviewer] minor release [0.12-10].
+  (enaut.w@googlemail.com)
+- Automatic commit of package [minecraft-overviewer] minor release [0.12-9].
+  (dietrich@teilgedanken.de)
+- Automatic commit of package [minecraft-overviewer] minor release [0.12-8].
+  (dietrich@teilgedanken.de)
+- Automatic commit of package [minecraft-overviewer] minor release [0.12-7].
+  (enaut.w@googlemail.com)
+- Automatic commit of package [minecraft-overviewer] minor release [0.12-6].
+  (dietricf@informatik.uni-freiburg.de)
+- Automatic commit of package [minecraft-overviewer] minor release [0.12-5].
+  (dietricf@informatik.uni-freiburg.de)
+- Removing symlinks (dietricf@informatik.uni-freiburg.de)
+- Automatic commit of package [minecraft-overviewer] minor release [0.12-4].
+  (dietricf@informatik.uni-freiburg.de)
+- python2-numpy does not exist in F23 (dietricf@informatik.uni-freiburg.de)
+- Automatic commit of package [minecraft-overviewer] minor release [0.12-3].
+  (dietricf@informatik.uni-freiburg.de)
+- Adding RPM spec file and initialize tito (dietricf@informatik.uni-
+  freiburg.de)
+- genpoi: Also fix missing nbt keys if processes > 1 (ovdev@fratti.ch)
+- genPOI: catch ChunkDoesntExist when processes > 1 (ovdev@fratti.ch)
+- genpoi: fix uncaught KeyErrors on some MC data (ovdev@fratti.ch)
+- remove print (admin@redsparr0w.com)
+- furnace orientation (admin@redsparr0w.com)
+- dispenser, dropper orientation (admin@redsparr0w.com)
+- add/update comments (admin@redsparr0w.com)
+- fix piston orientation (admin@redsparr0w.com)
+- fix gate orientation (admin@redsparr0w.com)
+- fix rail, powered rail orientation + powered state (admin@redsparr0w.com)
+- add oak button (admin@redsparr0w.com)
+- fix shulker, observer orientation (admin@redsparr0w.com)
+- fix slab top/bottom slab (admin@redsparr0w.com)
+- fix repeate, comparator orientation + powered state (admin@redsparr0w.com)
+- fix restone torch, torch orientations + lit state (admin@redsparr0w.com)
+- fix ladder, chest, ender chest, trapped chest + orientation
+  (admin@redsparr0w.com)
+- Add more blocks (admin@redsparr0w.com)
+- add banners, rearrange colored blocks by id (admin@redsparr0w.com)
+- update block properties (admin@redsparr0w.com)
+- update 1.13 underwater blocks to be water instead of air
+  (admin@redsparr0w.com)
+- remove items (not blocks) (admin@redsparr0w.com)
+- add & fix some blocks (admin@redsparr0w.com)
+- remove extra whitespace (admin@redsparr0w.com)
+- Add concrete powder and other misc. blocks (#4) (jspanos@gmail.com)
+- do not render internal faces for water (aargri@gmail.com)
+- Forward compatibility (gmcnew@gmail.com)
+- Reenable support for old 1.12-era chunks (gmcnew@gmail.com)
+- More blocks added (softer@lin.in.ua)
+- ignore "decorated" chunks (achin@eminence32.net)
+- Always interpret long_array as 64-bit (aargri@gmail.com)
+- Misc fixes (gmcnew@gmail.com)
+- More blocks... (softer@lin.in.ua)
+- Yet another attempt to get travis working (achin@eminence32.net)
+- Use hard-coded 1.13 client jar URL in travis config (achin@eminence32.net)
+- Update travis to use 1.13 textures (achin@eminence32.net)
+- Add puCharm directory to .gitignore (softer@lin.in.ua)
+- A 1.13-compatible texture pack is required (gmcnew@gmail.com)
+- Add support for remaining palette sizes. (gmcnew@gmail.com)
+- Support 9-bit palettes. (gmcnew@gmail.com)
+- More block mappings! (gmcnew@gmail.com)
+- Lots more block mappings (gmcnew@gmail.com)
+- Translate to old map format (gmcnew@gmail.com)
+- Allow new NBT type 12 (long array) to be read (gmcnew@gmail.com)
+- Finish updating texture names (gmcnew@gmail.com)
+- Minor texture fixes (gmcnew@gmail.com)
+- Reverse version-check logic (gmcnew@gmail.com)
+- Partial texture path fixes (gmcnew@gmail.com)
+
 * Mon Aug 27 2018 Franz Dietrich <dietrich@teilgedanken.de> 0.12-17
 - using python2 instead of python (dietrich@teilgedanken.de)
 - simple change (dietrich@teilgedanken.de)
