@@ -58,13 +58,55 @@ overviewer.util = {
                 var r_z = Math.floor(Math.floor(w_coords.z / 16.0) / 32.0);
                 var r_name = "r." + r_x + "." + r_z + ".mca";
 
-                this.coord_box.innerHTML = "<strong>X</strong> " +
+                this.coord_box.innerHTML = "X " +
                                            Math.round(w_coords.x) +
-                                           " <strong>Z</strong> " + Math.round(w_coords.z) +
+                                           " Z " + Math.round(w_coords.z) +
                                            " (" + r_name + ")";
             },
             onAdd: function() {
                 return this.coord_box;
+            }
+        });
+        overviewer.progressClass = L.Control.extend({
+            options: {
+                position: 'bottomright'
+            },
+            initialize: function() {
+                this.progress = L.DomUtil.create("div", "progress");
+                this.progress.innerHTML = 'Current render progress';
+                this.progress.style.visibility = 'hidden';
+            },
+            update: function() {
+                fetch("progress.json")
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        this.progress.innerHTML = data.message;
+                        if (data.update > 0) {
+                            setTimeout(this.update.bind(this), data.update);
+                            this.progress.style.visibility = '';
+                        } else {
+                            setTimeout(this.update.bind(this), 60000);
+                            this.progress.innerHTML = 'Hidden - data.update < 0';
+                            this.progress.style.visibility = 'hidden';
+                        }
+                    })
+                    .catch(error => {
+                        this.progress.innerHtml = 'Hidden - no data';
+                        this.progress.style.visibility = 'hidden';
+                        console.info('Error getting progress; hiding control', error);
+                    });
+            },
+            onAdd: function() {
+                // Not all browsers may have this
+                if ('fetch' in window) {
+                    setTimeout(this.update.bind(this), 0);
+                }
+                return this.progress;
             }
         });
         overviewer.compassClass = L.Control.extend({
@@ -107,10 +149,21 @@ overviewer.util = {
 
                 overviewer.layerCtrl.remove();
 
+                var base_layers = {};
+                var overlay_layers = {};
+                for (var bl in overviewer.collections.mapTypes[selected_world]) {
+                    var bl_o = overviewer.collections.mapTypes[selected_world][bl];
+                    base_layers[bl_o.tileSetConfig.name] = bl_o;
+                }
+                for (var ol in overviewer.collections.overlays[selected_world]) {
+                    var ol_o = overviewer.collections.overlays[selected_world][ol];
+                    overlay_layers[ol_o.tileSetConfig.name] = ol_o;
+                }
+
                 overviewer.layerCtrl = L.control.layers(
-                        overviewer.collections.mapTypes[selected_world],
-                        overviewer.collections.overlays[selected_world],
-                        {collapsed: false})
+                    base_layers,
+                    overlay_layers,
+                    {collapsed: false})
                 .addTo(overviewer.map);
 
                 for (var world_name in overviewer.collections.mapTypes) {
@@ -145,7 +198,7 @@ overviewer.util = {
                 overviewer.current_world = selected_world;
 
                 if (overviewer.collections.mapTypes[selected_world] && overviewer.current_layer[selected_world]) {
-                    overviewer.map.addLayer(overviewer.collections.mapTypes[selected_world][overviewer.current_layer[selected_world].tileSetConfig.name]);
+                    overviewer.map.addLayer(overviewer.collections.mapTypes[selected_world][overviewer.current_layer[selected_world].tileSetConfig.path]);
                 } else {
                     var tset_name = Object.keys(overviewer.collections.mapTypes[selected_world])[0]
                     overviewer.map.addLayer(overviewer.collections.mapTypes[selected_world][tset_name]);
@@ -179,7 +232,6 @@ overviewer.util = {
                         tsc.marker_groups[marker_group].remove();
                     }
                 }
-
             }
             overviewer.current_layer[overviewer.current_world] = ev.layer;
             var ovconf = ev.layer.tileSetConfig;
@@ -225,6 +277,28 @@ overviewer.util = {
                         [],
                         ovconf.marker_groups, {collapsed: false}).addTo(overviewer.map);
             }
+            for (var marker_group in ovconf.marker_groups) {
+                var mg = ovconf.marker_groups[marker_group];
+                if (mg.options.default_checked) {
+                    mg.addTo(overviewer.map);
+                }
+            }
+            // Update overlays
+            for (var olw in overviewer.collections.overlays) {
+                for (var ol in overviewer.collections.overlays[olw]) {
+                    var ol_o = overviewer.collections.overlays[olw][ol];
+                    if (ol_o.tileSetConfig.isOverlay.includes(ovconf.path)) {
+                        if (!overviewer.util.isInLayerCtrl(overviewer.layerCtrl, ol_o)) {
+                            overviewer.layerCtrl.addOverlay(ol_o, ol_o.tileSetConfig.name);
+                        }
+                    } else {
+                        if (overviewer.util.isInLayerCtrl(overviewer.layerCtrl, ol_o)) {
+                            overviewer.layerCtrl.removeLayer(ol_o);
+                        }
+                    }
+                }
+            }
+
 
             overviewer.util.updateHash();
         });
@@ -247,6 +321,7 @@ overviewer.util = {
         overviewer.compass = new overviewer.compassClass(
             overviewerConfig.CONST.image.compass);
         overviewer.coord_box = new overviewer.coordBoxClass();
+        overviewer.progress = new overviewer.progressClass();
 
 
         overviewerConfig.worlds.forEach(function(world_name, idx) {
@@ -258,6 +333,7 @@ overviewer.util = {
         overviewer.compass.addTo(overviewer.map);
         overviewer.worldCtrl.addTo(overviewer.map);
         overviewer.coord_box.addTo(overviewer.map);
+        overviewer.progress.addTo(overviewer.map);
 
         overviewer.map.on('mousemove', function(ev) {
             overviewer.coord_box.render(ev.latlng);
@@ -274,9 +350,9 @@ overviewer.util = {
             myLayer.getTileUrl = overviewer.util.getTileUrlGenerator(obj.path, obj.base, obj.imgextension);
 
             if (obj.isOverlay) {
-                overviewer.collections.overlays[obj.world][obj.name] = myLayer;
+                overviewer.collections.overlays[obj.world][obj.path] = myLayer;
             } else {
-                overviewer.collections.mapTypes[obj.world][obj.name] = myLayer;
+                overviewer.collections.mapTypes[obj.world][obj.path] = myLayer;
             }
 
             obj.marker_groups = undefined;
@@ -290,7 +366,8 @@ overviewer.util = {
                     for (var mkidx = 0; mkidx < markers[obj.path].length; mkidx++) {
                         var marker_group = new L.layerGroup();
                         var marker_entry = markers[obj.path][mkidx];
-                        var icon =  L.icon({iconUrl: marker_entry.icon});
+                        L.Util.setOptions(marker_group, {default_checked: marker_entry.checked});
+                        var icon =  L.divIcon({html: `<img class="ov-marker" src="${marker_entry.icon}">`});
                         console.log("marker group:", marker_entry.displayName, marker_entry.groupName);
 
                         for (var dbidx = 0; dbidx < markersDB[marker_entry.groupName].raw.length; dbidx++) {
@@ -298,12 +375,14 @@ overviewer.util = {
                             var latlng = overviewer.util.fromWorldToLatLng(db.x, db.y, db.z, obj);
                             var m_icon;
                             if (db.icon != undefined) {
-                                m_icon = L.icon({iconUrl: db.icon});
+                                m_icon = L.divIcon({html: `<img class="ov-marker" src="${db.icon}">`});
                             } else {
                                 m_icon = icon;
                             }
                             let new_marker = new L.marker(latlng, {icon: m_icon, title: db.hovertext});
-                            new_marker.bindPopup(db.text);
+                            if (marker_entry.createInfoWindow) {
+                                new_marker.bindPopup(db.text);
+                            }
                             marker_group.addLayer(new_marker);
                         }
                         obj.marker_groups[marker_entry.displayName] = marker_group;
@@ -324,9 +403,9 @@ overviewer.util = {
 
             if (typeof(obj.spawn) == "object") {
                 var latlng = overviewer.util.fromWorldToLatLng(obj.spawn[0], obj.spawn[1], obj.spawn[2], obj);
-                overviewer.collections.centers[obj.world] = [ latlng, 1 ];
+                overviewer.collections.centers[obj.world] = [ latlng, obj.defaultZoom ];
             } else {
-                overviewer.collections.centers[obj.world] = [ [0, 0], 1 ];
+                overviewer.collections.centers[obj.world] = [ [0, 0], obj.defaultZoom ];
             }
 
         });
@@ -338,8 +417,8 @@ overviewer.util = {
             .addTo(overviewer.map);
         overviewer.current_world = overviewerConfig.worlds[0];
 
-        //myLayer.addTo(overviewer.map);
-        overviewer.map.setView(overviewer.util.fromWorldToLatLng(tset.spawn[0], tset.spawn[1], tset.spawn[2], tset), 1);
+        let center = overviewer.collections.centers[overviewer.current_world];
+        overviewer.map.setView(center[0], center[1]);
 
         if (!overviewer.util.initHash()) {
             overviewer.worldCtrl.onChange({target: {value: overviewer.current_world}});
@@ -712,7 +791,7 @@ overviewer.util = {
             // default to (map-update friendly) negative zooms
             zoom -= ovconf.maxZoom;
         }
-        overviewer.util.setHash(coordinates.x, coordinates.y, coordinates.z, zoom, currWorld, ovconf.name);
+        overviewer.util.setHash(coordinates.x, coordinates.y, coordinates.z, zoom, currWorld, ovconf.path);
     },
     'goToHash': function() {
         // Note: the actual data begins at coords[1], coords[0] is empty.
@@ -732,6 +811,11 @@ overviewer.util = {
         }
 
         var target_layer = overviewer.collections.mapTypes[world_name][tileset_name];
+        if (!target_layer) {
+            var default_tset_name = Object.keys(
+                overviewer.collections.mapTypes[world_name])[0];
+            target_layer = overviewer.collections.mapTypes[world_name][default_tset_name];
+        }
         var ovconf = target_layer.tileSetConfig;
 
         var latlngcoords = overviewer.util.fromWorldToLatLng(parseInt(coords[1]),
@@ -819,5 +903,13 @@ overviewer.util = {
             }
             return(urlBase + url);
         };
+    },
+    'isInLayerCtrl': function(ctrl, layer) {
+        for (var l in ctrl._layers) {
+            if (ctrl._layers[l].layer.tileSetConfig.path == layer.tileSetConfig.path) {
+                return true;
+            }
+        }
+        return false;
     }
 };

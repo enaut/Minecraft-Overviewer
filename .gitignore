@@ -35,3 +35,8 @@ overviewer_core/src/primitives.h
 #Script files, as users may want their own scripts.
 *.sh
 *.bat
+
+# PyCharm directory
+.idea
+/.vs/Minecraft-Overviewer/v15/.suo
+/.vs
