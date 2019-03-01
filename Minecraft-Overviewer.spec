@@ -1,7 +1,7 @@
 Summary: Generates a map viewable with a webrowser.
 Name: minecraft-overviewer
 Version: 0.12
-Release: 17%{?dist}
+Release: 20%{?dist}
 Source0: %{name}-%{version}.tar.gz
 License: GNU General Public License v3
 Group: Development/Libraries
@@ -40,6 +40,204 @@ rm -rf %{buildroot}
 %doc README.rst COPYING.txt sample_config.py
 
 %changelog
+* Fri Mar 01 2019 Franz Dietrich <dietrich@teilgedanken.de> 0.12-20
+- progressbar: actually flush the fd on update (ovdev@fratti.ch)
+- web: add layer fallback to goToHash (ovdev@fratti.ch)
+- web: fix overlays showing up for all base layers (ovdev@fratti.ch)
+- do block state unpacking with numpy slices, not loops (aargri@gmail.com)
+- Fix C extension build warnings the painful way (ovdev@fratti.ch)
+- block states with 9, 10, 11, and 12 bits per value now unpack correctly
+  (aargri@gmail.com)
+- Revert "Fix C extension build warnings" (aargri@gmail.com)
+- web: fix white rectangle behind markers (ovdev@fratti.ch)
+- web: reimplement marker groups default checking (ovdev@fratti.ch)
+- docs: actually fix chestFilter example (ovdev@fratti.ch)
+- docs: fix chestFilter example (ovdev@fratti.ch)
+- Fix C extension build warnings (ovdev@fratti.ch)
+- Fix marker icon position properly. Closes #1481. (willemmaster@hotmail.com)
+- removed strong tags in coordination box (marc@marc.tv)
+- trapdoor orientation non-oak trapdoors dried kelp blocks
+  (jvaskonen@gmail.com)
+- non-oak buttons buttons on top of blocks (jvaskonen@gmail.com)
+- bone block orientation smooth stone blocks coral and dead coral blocks blue
+  ice (jvaskonen@gmail.com)
+- Wood and stripped wood (jvaskonen@gmail.com)
+- Stripped logs (jvaskonen@gmail.com)
+- non-oak pressure plates (jvaskonen@gmail.com)
+- Uncarved pumpkin textures (jvaskonen@gmail.com)
+- One more infested block (jvaskonen@gmail.com)
+- Fix light grey terracotta and glazed terracotta orientation.
+  (jvaskonen@gmail.com)
+- When adding quartz pillar orientation, I assumed the top orientation was
+  correct, when it was actually the side. (jvaskonen@gmail.com)
+- Fixing top textures of non-vertically oriented quartz pillars.
+  (jvaskonen@gmail.com)
+- Added note blocks, carved pumkin, non-oak pressure plates (oak texture), more
+  infested stone bricks and melons. (jvaskonen@gmail.com)
+- Adds chiseled quartz and quartz pillars (jvaskonen@gmail.com)
+- Adding mappings for damaged anvils. Add handling for sign and anvil
+  orientation. (jvaskonen@gmail.com)
+- Potted plants still not rendering, but I figure this is better than an error
+  message. (jvaskonen@gmail.com)
+- Fixes big mushrooms (jvaskonen@gmail.com)
+- Fixing handling of torches/redstone torches on walls (jvaskonen@gmail.com)
+- genpoi: Also fix missing nbt keys if processes > 1 (ovdev@fratti.ch)
+- genPOI: catch ChunkDoesntExist when processes > 1 (ovdev@fratti.ch)
+- genpoi: fix uncaught KeyErrors on some MC data (ovdev@fratti.ch)
+- web: fix createInfoWindow not having any effect (ovdev@fratti.ch)
+- web: fix marker icon position (ovdev@fratti.ch)
+- Make JSObserver work with Leaflet. Fixes #1451. (willemmaster@hotmail.com)
+- Use cached center for initial view. Fixes #1453. (willemmaster@hotmail.com)
+- remove print (admin@redsparr0w.com)
+- furnace orientation (admin@redsparr0w.com)
+- dispenser, dropper orientation (admin@redsparr0w.com)
+- add/update comments (admin@redsparr0w.com)
+- fix piston orientation (admin@redsparr0w.com)
+- fix gate orientation (admin@redsparr0w.com)
+- fix rail, powered rail orientation + powered state (admin@redsparr0w.com)
+- add oak button (admin@redsparr0w.com)
+- fix shulker, observer orientation (admin@redsparr0w.com)
+- fix slab top/bottom slab (admin@redsparr0w.com)
+- fix repeate, comparator orientation + powered state (admin@redsparr0w.com)
+- fix restone torch, torch orientations + lit state (admin@redsparr0w.com)
+- fix ladder, chest, ender chest, trapped chest + orientation
+  (admin@redsparr0w.com)
+- Add more blocks (admin@redsparr0w.com)
+- add banners, rearrange colored blocks by id (admin@redsparr0w.com)
+- update block properties (admin@redsparr0w.com)
+- update 1.13 underwater blocks to be water instead of air
+  (admin@redsparr0w.com)
+- remove items (not blocks) (admin@redsparr0w.com)
+- add & fix some blocks (admin@redsparr0w.com)
+- remove extra whitespace (admin@redsparr0w.com)
+- Disable IRC notifications from travis (achin@eminence32.net)
+- Fixed behaviour of 'defaultZoom' property. (leightheduck@gmail.com)
+- NBT: Use a replacement strategy to deal with undecodable data.
+  (achin@eminence32.net)
+- Add concrete powder and other misc. blocks (#4) (jspanos@gmail.com)
+- do not render internal faces for water (aargri@gmail.com)
+- Forward compatibility (gmcnew@gmail.com)
+- Reenable support for old 1.12-era chunks (gmcnew@gmail.com)
+- More blocks added (softer@lin.in.ua)
+- ignore "decorated" chunks (achin@eminence32.net)
+- Always interpret long_array as 64-bit (aargri@gmail.com)
+- Misc fixes (gmcnew@gmail.com)
+- More blocks... (softer@lin.in.ua)
+- Yet another attempt to get travis working (achin@eminence32.net)
+- Use hard-coded 1.13 client jar URL in travis config (achin@eminence32.net)
+- Update travis to use 1.13 textures (achin@eminence32.net)
+- Add puCharm directory to .gitignore (softer@lin.in.ua)
+- A 1.13-compatible texture pack is required (gmcnew@gmail.com)
+- Add support for remaining palette sizes. (gmcnew@gmail.com)
+- Support 9-bit palettes. (gmcnew@gmail.com)
+- More block mappings! (gmcnew@gmail.com)
+- Lots more block mappings (gmcnew@gmail.com)
+- Translate to old map format (gmcnew@gmail.com)
+- Allow new NBT type 12 (long array) to be read (gmcnew@gmail.com)
+- Finish updating texture names (gmcnew@gmail.com)
+- Minor texture fixes (gmcnew@gmail.com)
+- Reverse version-check logic (gmcnew@gmail.com)
+- Partial texture path fixes (gmcnew@gmail.com)
+
+* Fri Mar 01 2019 Franz Dietrich <dietrich@teilgedanken.de>
+- progressbar: actually flush the fd on update (ovdev@fratti.ch)
+- web: add layer fallback to goToHash (ovdev@fratti.ch)
+- web: fix overlays showing up for all base layers (ovdev@fratti.ch)
+- do block state unpacking with numpy slices, not loops (aargri@gmail.com)
+- Fix C extension build warnings the painful way (ovdev@fratti.ch)
+- block states with 9, 10, 11, and 12 bits per value now unpack correctly
+  (aargri@gmail.com)
+- Revert "Fix C extension build warnings" (aargri@gmail.com)
+- web: fix white rectangle behind markers (ovdev@fratti.ch)
+- web: reimplement marker groups default checking (ovdev@fratti.ch)
+- docs: actually fix chestFilter example (ovdev@fratti.ch)
+- docs: fix chestFilter example (ovdev@fratti.ch)
+- Fix C extension build warnings (ovdev@fratti.ch)
+- Fix marker icon position properly. Closes #1481. (willemmaster@hotmail.com)
+- removed strong tags in coordination box (marc@marc.tv)
+- trapdoor orientation non-oak trapdoors dried kelp blocks
+  (jvaskonen@gmail.com)
+- non-oak buttons buttons on top of blocks (jvaskonen@gmail.com)
+- bone block orientation smooth stone blocks coral and dead coral blocks blue
+  ice (jvaskonen@gmail.com)
+- Wood and stripped wood (jvaskonen@gmail.com)
+- Stripped logs (jvaskonen@gmail.com)
+- non-oak pressure plates (jvaskonen@gmail.com)
+- Uncarved pumpkin textures (jvaskonen@gmail.com)
+- One more infested block (jvaskonen@gmail.com)
+- Fix light grey terracotta and glazed terracotta orientation.
+  (jvaskonen@gmail.com)
+- When adding quartz pillar orientation, I assumed the top orientation was
+  correct, when it was actually the side. (jvaskonen@gmail.com)
+- Fixing top textures of non-vertically oriented quartz pillars.
+  (jvaskonen@gmail.com)
+- Added note blocks, carved pumkin, non-oak pressure plates (oak texture), more
+  infested stone bricks and melons. (jvaskonen@gmail.com)
+- Adds chiseled quartz and quartz pillars (jvaskonen@gmail.com)
+- Adding mappings for damaged anvils. Add handling for sign and anvil
+  orientation. (jvaskonen@gmail.com)
+- Potted plants still not rendering, but I figure this is better than an error
+  message. (jvaskonen@gmail.com)
+- Fixes big mushrooms (jvaskonen@gmail.com)
+- Fixing handling of torches/redstone torches on walls (jvaskonen@gmail.com)
+- genpoi: Also fix missing nbt keys if processes > 1 (ovdev@fratti.ch)
+- genPOI: catch ChunkDoesntExist when processes > 1 (ovdev@fratti.ch)
+- genpoi: fix uncaught KeyErrors on some MC data (ovdev@fratti.ch)
+- web: fix createInfoWindow not having any effect (ovdev@fratti.ch)
+- web: fix marker icon position (ovdev@fratti.ch)
+- Make JSObserver work with Leaflet. Fixes #1451. (willemmaster@hotmail.com)
+- Use cached center for initial view. Fixes #1453. (willemmaster@hotmail.com)
+- remove print (admin@redsparr0w.com)
+- furnace orientation (admin@redsparr0w.com)
+- dispenser, dropper orientation (admin@redsparr0w.com)
+- add/update comments (admin@redsparr0w.com)
+- fix piston orientation (admin@redsparr0w.com)
+- fix gate orientation (admin@redsparr0w.com)
+- fix rail, powered rail orientation + powered state (admin@redsparr0w.com)
+- add oak button (admin@redsparr0w.com)
+- fix shulker, observer orientation (admin@redsparr0w.com)
+- fix slab top/bottom slab (admin@redsparr0w.com)
+- fix repeate, comparator orientation + powered state (admin@redsparr0w.com)
+- fix restone torch, torch orientations + lit state (admin@redsparr0w.com)
+- fix ladder, chest, ender chest, trapped chest + orientation
+  (admin@redsparr0w.com)
+- Add more blocks (admin@redsparr0w.com)
+- add banners, rearrange colored blocks by id (admin@redsparr0w.com)
+- update block properties (admin@redsparr0w.com)
+- update 1.13 underwater blocks to be water instead of air
+  (admin@redsparr0w.com)
+- remove items (not blocks) (admin@redsparr0w.com)
+- add & fix some blocks (admin@redsparr0w.com)
+- remove extra whitespace (admin@redsparr0w.com)
+- Disable IRC notifications from travis (achin@eminence32.net)
+- Fixed behaviour of 'defaultZoom' property. (leightheduck@gmail.com)
+- NBT: Use a replacement strategy to deal with undecodable data.
+  (achin@eminence32.net)
+- Add concrete powder and other misc. blocks (#4) (jspanos@gmail.com)
+- do not render internal faces for water (aargri@gmail.com)
+- Forward compatibility (gmcnew@gmail.com)
+- Reenable support for old 1.12-era chunks (gmcnew@gmail.com)
+- More blocks added (softer@lin.in.ua)
+- ignore "decorated" chunks (achin@eminence32.net)
+- Always interpret long_array as 64-bit (aargri@gmail.com)
+- Misc fixes (gmcnew@gmail.com)
+- More blocks... (softer@lin.in.ua)
+- Yet another attempt to get travis working (achin@eminence32.net)
+- Use hard-coded 1.13 client jar URL in travis config (achin@eminence32.net)
+- Update travis to use 1.13 textures (achin@eminence32.net)
+- Add puCharm directory to .gitignore (softer@lin.in.ua)
+- A 1.13-compatible texture pack is required (gmcnew@gmail.com)
+- Add support for remaining palette sizes. (gmcnew@gmail.com)
+- Support 9-bit palettes. (gmcnew@gmail.com)
+- More block mappings! (gmcnew@gmail.com)
+- Lots more block mappings (gmcnew@gmail.com)
+- Translate to old map format (gmcnew@gmail.com)
+- Allow new NBT type 12 (long array) to be read (gmcnew@gmail.com)
+- Finish updating texture names (gmcnew@gmail.com)
+- Minor texture fixes (gmcnew@gmail.com)
+- Reverse version-check logic (gmcnew@gmail.com)
+- Partial texture path fixes (gmcnew@gmail.com)
+
 * Mon Aug 27 2018 Franz Dietrich <dietrich@teilgedanken.de> 0.12-17
 - using python2 instead of python (dietrich@teilgedanken.de)
 - simple change (dietrich@teilgedanken.de)
