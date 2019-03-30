@@ -1,7 +1,7 @@
 Summary: Generates a map viewable with a webrowser.
 Name: minecraft-overviewer
 Version: 0.12
-Release: 20%{?dist}
+Release: 21%{?dist}
 Source0: %{name}-%{version}.tar.gz
 License: GNU General Public License v3
 Group: Development/Libraries
@@ -40,6 +40,58 @@ rm -rf %{buildroot}
 %doc README.rst COPYING.txt sample_config.py
 
 %changelog
+* Sat Mar 30 2019 Franz Dietrich <dietrich@teilgedanken.de> 0.12-21
+- docs/signs.rst: fix filter function ids for 1.13 (ovdev@fratti.ch)
+- web: fix goToHash on layer change (aheadley@waysaboutstuff.com)
+- world: fix stair orientations (ovdev@fratti.ch)
+- world: bandaid fix for double stone brick slabs (ovdev@fratti.ch)
+- added cut_red_sandstone and chiseled_red_sandstone
+  (programming18@verdunkelbar.de)
+- mailmap: more adding of myself, sheesh (ovdev@fratti.ch)
+- mailmap: add myself (ovdev@fratti.ch)
+- Implement style fixes (Wunkolo@gmail.com)
+- Fix block_class_is_subset linkage (Wunkolo@gmail.com)
+- Increment extension version (Wunkolo@gmail.com)
+- Fix implicit declaration (Wunkolo@gmail.com)
+- Collapse special case logic to block_class_is_subset (Wunkolo@gmail.com)
+- Convert case switch to block_class_is_subset (Wunkolo@gmail.com)
+- block_class_is_subset implementation pass (Wunkolo@gmail.com)
+- Implement block_class header (Wunkolo@gmail.com)
+- Increment overviewer extension version (Wunkolo@gmail.com)
+- Block ID enum pass (Wunkolo@gmail.com)
+- Block ID to mc_id replacement pass (Wunkolo@gmail.com)
+- First pass mc_id enum implementation (Wunkolo@gmail.com)
+- world: fix potatoes and carrots growth stages (ovdev@fratti.ch)
+- world: fix seed growth stages (ovdev@fratti.ch)
+- world: fix mossy cobblestone block/wall rendering (ovdev@fratti.ch)
+- world: fix petrified_oak_slab rendering (ovdev@fratti.ch)
+- settingsValidators: fix code style, adjust strings (ovdev@fratti.ch)
+- overviewer: use print_function (ovdev@fratti.ch)
+- Replaced OSX with macOS (admin@tomtamaira.com)
+- contrib/png-it: allow saving to stdout with - (ovdev@fratti.ch)
+- contrib/png-it: use the print function (ovdev@fratti.ch)
+- contrib/png-it: switch from optparse to argparse (ovdev@fratti.ch)
+- contrib/png-it: clean up code, grammar (ovdev@fratti.ch)
+- Updated macOS Build Instructions (#1530) (admin@tomtamaira.com)
+- contribManager: get rid of removed scripts (ovdev@fratti.ch)
+- Simplified finding spawn Y (jeroensmienk@icloud.com)
+- contrib: delete scripts that are no longer useful (ovdev@fratti.ch)
+- genPOI: fix code style (ovdev@fratti.ch)
+- overviewer: warn about shell quoting issues (ovdev@fratti.ch)
+- overviewer: replace optparse with argparse (ovdev@fratti.ch)
+- overviewer: fix git hash being after line break (ovdev@fratti.ch)
+- overviewer: misc style fixes (ovdev@fratti.ch)
+- optimizeimages: fix code style (ovdev@fratti.ch)
+- util: fix code style (ovdev@fratti.ch)
+- cache: fix code style (ovdev@fratti.ch)
+- logger: code style fixes (ovdev@fratti.ch)
+- overviewer: code style and consistency fixes (ovdev@fratti.ch)
+- Add WebP image format support (ovdev@fratti.ch)
+- tileset: drastic code style fixes (ovdev@fratti.ch)
+- docs: update copyright year, version, release (ovdev@fratti.ch)
+- nbt: code style fixes (ovdev@fratti.ch)
+- observer: drastic code style fixes (ovdev@fratti.ch)
+
 * Fri Mar 01 2019 Franz Dietrich <dietrich@teilgedanken.de> 0.12-20
 - progressbar: actually flush the fd on update (ovdev@fratti.ch)
 - web: add layer fallback to goToHash (ovdev@fratti.ch)
