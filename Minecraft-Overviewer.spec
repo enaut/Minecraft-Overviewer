@@ -1,7 +1,7 @@
 Summary: Generates a map viewable with a webrowser.
 Name: minecraft-overviewer
 Version: 0.12
-Release: 21%{?dist}
+Release: 22%{?dist}
 Source0: %{name}-%{version}.tar.gz
 License: GNU General Public License v3
 Group: Development/Libraries
@@ -40,6 +40,37 @@ rm -rf %{buildroot}
 %doc README.rst COPYING.txt sample_config.py
 
 %changelog
+* Thu Jun 06 2019 Franz Dietrich <dietrich@teilgedanken.de> 0.12-22
+- overviewer: add warning for CentOS/RHEL 6 (ovdev@fratti.ch)
+- Ensure coordinates are properly converted when changing views (#1571)
+  (23699979+mircokroon@users.noreply.github.com)
+- world: remove lit chunk check (ovdev@fratti.ch)
+- world: make the chunk populated code even uglier (ovdev@fratti.ch)
+- world: fix snowy grass check (ovdev@fratti.ch)
+- world: fix rendering of 1.13 worlds (ovdev@fratti.ch)
+- world: only render fully formed and lit chunks (ovdev@fratti.ch)
+- .gitignore: add the docs build dir to ignore (ovdev@fratti.ch)
+- Add fletching, cartography and smithing tables (ovdev@fratti.ch)
+- added new 1.14 slabs, referencing issue #1560 (programming18@verdunkelbar.de)
+- docs/running: update texture install instructions (ovdev@fratti.ch)
+- travis: test with 1.14 assets (ovdev@fratti.ch)
+- textures: fix stone slabs for 1.14 (ovdev@fratti.ch)
+- world: ignore poi directory in world dir (ovdev@fratti.ch)
+- world: fix for chunk parsing for 1.14 (ovdev@fratti.ch)
+- Revert "web: fix goToHash on layer change" (ovdev@fratti.ch)
+- primitives: misc char -> short fixes (ovdev@fratti.ch)
+- world: space comments correctly (ovdev@fratti.ch)
+- textures: set prismarine slabs to transparent (ovdev@fratti.ch)
+- reorder code in world.py (programming18@verdunkelbar.de)
+- double slab fix (programming18@verdunkelbar.de)
+- activated red_sandstone_slab, for only half implemented
+  (programming18@verdunkelbar.de)
+- fix upper/lower slab issue for more slab types
+  (programming18@verdunkelbar.de)
+- added: prismarine_brick_stairs, prismarine_slab, dark_prismarine_slab,
+  prismarine_brick_slab (programming18@verdunkelbar.de)
+- fix prismarine stairs (ovdev@fratti.ch)
+
 * Sat Mar 30 2019 Franz Dietrich <dietrich@teilgedanken.de> 0.12-21
 - docs/signs.rst: fix filter function ids for 1.13 (ovdev@fratti.ch)
 - web: fix goToHash on layer change (aheadley@waysaboutstuff.com)
