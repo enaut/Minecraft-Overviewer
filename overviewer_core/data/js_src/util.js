@@ -221,6 +221,27 @@ overviewer.util = {
             '<a href="https://overviewer.org">Overviewer/Leaflet</a>');
 
         overviewer.map.on('baselayerchange', function(ev) {
+            
+            // when changing the layer, ensure coordinates remain correct
+            if (overviewer.current_layer[overviewer.current_world]) {
+                const center = overviewer.map.getCenter();
+                const currentWorldCoords = overviewer.util.fromLatLngToWorld(
+                        center.lat, 
+                        center.lng, 
+                        overviewer.current_layer[overviewer.current_world].tileSetConfig);
+                    
+                const newMapCoords = overviewer.util.fromWorldToLatLng(
+                        currentWorldCoords.x, 
+                        currentWorldCoords.y, 
+                        currentWorldCoords.z, 
+                        ev.layer.tileSetConfig);
+                        
+                overviewer.map.setView(
+                        newMapCoords,
+                        overviewer.map.getZoom(),
+                        { animate: false });
+            }
+            
             // before updating the current_layer, remove the marker control, if it exists
             if (overviewer.current_world && overviewer.current_layer[overviewer.current_world]) {
                 let tsc = overviewer.current_layer[overviewer.current_world].tileSetConfig;
@@ -287,7 +308,7 @@ overviewer.util = {
             for (var olw in overviewer.collections.overlays) {
                 for (var ol in overviewer.collections.overlays[olw]) {
                     var ol_o = overviewer.collections.overlays[olw][ol];
-                    if (ol_o.tileSetConfig.isOverlay) {
+                    if (ol_o.tileSetConfig.isOverlay.includes(ovconf.path)) {
                         if (!overviewer.util.isInLayerCtrl(overviewer.layerCtrl, ol_o)) {
                             overviewer.layerCtrl.addOverlay(ol_o, ol_o.tileSetConfig.name);
                         }
