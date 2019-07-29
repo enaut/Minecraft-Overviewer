@@ -19,8 +19,8 @@ import os
 import sys
 import time
 
-import progressbar
-import rcon
+from . import progressbar
+from . import rcon
 
 
 class Observer(object):
@@ -73,7 +73,7 @@ class Observer(object):
     def get_percentage(self):
         """Get the current progress percentage. Assumes 100% if max_value is 0
         """
-        if self.get_max_value() is 0:
+        if self.get_max_value() == 0:
             return 100.0
         else:
             return self.get_current_value() * 100.0 / self.get_max_value()
@@ -231,7 +231,7 @@ class JSObserver(Observer):
         self.last_update = -11
         self.last_update_time = -1
         self._current_value = -1
-        self.minrefresh = 1000*minrefresh
+        self.minrefresh = 1000 * minrefresh
         self.json = dict()
 
         # function to print formatted eta
@@ -262,11 +262,11 @@ class JSObserver(Observer):
                             "same as the Overviewer output directory"
                             % outputdir)
 
-        self.logfile = open(os.path.join(outputdir, "progress.json"), "w+", 0)
+        self.logfile = open(os.path.join(outputdir, "progress.json"), "wb+", 0)
         self.json["message"] = "Render starting..."
         self.json["update"] = self.minrefresh
         self.json["messageTime"] = time.time()
-        json.dump(self.json, self.logfile)
+        self.logfile.write(json.dumps(self.json).encode())
         self.logfile.flush()
 
     def start(self, max_value):
@@ -275,7 +275,7 @@ class JSObserver(Observer):
         self.json["message"] = self.messages["totalTiles"] % (max_value)
         self.json["update"] = self.minrefresh
         self.json["messageTime"] = time.time()
-        json.dump(self.json, self.logfile)
+        self.logfile.write(json.dumps(self.json).encode())
         self.logfile.flush()
         self.start_time = time.time()
         self._set_max_value(max_value)
@@ -301,7 +301,7 @@ class JSObserver(Observer):
         # (until the next render)
         self.json["update"] = 60000
         self.json["messageTime"] = time.time()
-        json.dump(self.json, self.logfile)
+        self.logfile.write(json.dumps(self.json).encode())
         self.logfile.close()
 
     def is_finished(self):
@@ -339,7 +339,7 @@ class JSObserver(Observer):
                    self.get_percentage(), str(eta))
             self.json["update"] = refresh
             self.json["messageTime"] = time.time()
-            json.dump(self.json, self.logfile)
+            self.logfile.write(json.dumps(self.json).encode())
             self.logfile.flush()
             self.last_update_time = time.time()
             self.last_update = current_value
@@ -349,7 +349,7 @@ class JSObserver(Observer):
     def get_percentage(self):
         """Get the current progress percentage. Assumes 100% if max_value is 0
         """
-        if self.get_max_value() is 0:
+        if self.get_max_value() == 0:
             return 100.0
         else:
             return self.get_current_value() * 100.0 / self.get_max_value()
@@ -463,9 +463,11 @@ class RConObserver(Observer):
             self.last_update = current_value
 
     def _need_update(self):
-        return(self.get_percentage() -
-               (self.last_update * 100.0 / self.get_max_value())
-               >= self.pct_interval)
+        if self.get_max_value() > 0:
+            return(self.get_percentage() - (self.last_update * 100.0 / self.get_max_value())
+                   >= self.pct_interval)
+        else:
+            return True
 
     def _send_output(self, output):
         self.conn.command("say", output)

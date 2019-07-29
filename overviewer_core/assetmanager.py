@@ -13,22 +13,21 @@
 #    You should have received a copy of the GNU General Public License along
 #    with the Overviewer.  If not, see <http://www.gnu.org/licenses/>.
 
-import json
-import os
 import codecs
-import locale
-import time
+import json
 import logging
+import os
+import time
 import traceback
 
 from PIL import Image
 
-import world
-import util
-from files import FileReplacer, mirror_dir, get_fs_caps
+from . import world
+from . import util
+from .files import FileReplacer, mirror_dir, get_fs_caps
 
 
-class AssetManager(object):
+class AssetManager:
     """\
 These objects provide an interface to metadata and persistent data, and at the
 same time, controls the generated javascript files in the output directory.
@@ -53,23 +52,13 @@ top-level directory.
             with open(config_loc) as c:
                 ovconf_str = "{" + "\n".join(c.readlines()[1:-1]) + "}"
             self.overviewerConfig = json.loads(ovconf_str)
-        except Exception, e:
+        except Exception as e:
             if os.path.exists(config_loc):
                 logging.warning("A previous overviewerConfig.js was found, "
                                 "but I couldn't read it for some reason."
                                 "Continuing with a blank config")
             logging.debug(traceback.format_exc())
             self.overviewerConfig = dict(tilesets=dict())
-
-        # Make sure python knows the preferred encoding. If it does not, set it
-        # to utf-8"
-        self.preferredencoding = locale.getpreferredencoding()
-        try:
-            # We don't care what is returned, just that we can get a codec.
-            codecs.lookup(self.preferredencoding)
-        except LookupError:
-            self.preferredencoding = "utf_8"
-        logging.debug("Preferred enoding set to: %s", self.preferredencoding)
 
     def get_tileset_config(self, name):
         "Return the correct dictionary from the parsed overviewerConfig.js"
@@ -138,7 +127,6 @@ top-level directory.
         dump['map']['debug'] = True
         dump['map']['cacheTag'] = str(int(time.time()))
         dump['map']['north_direction'] = 'lower-left'   # only temporary
-        dump['map']['center'] = [-314, 67, 94]
         dump['map']['controls'] = {
             'pan': True,
             'zoom': True,
@@ -147,7 +135,7 @@ top-level directory.
             'mapType': True,
             'overlays': True,
             'coordsBox': True,
-            }
+        }
 
         dump['tilesets'] = []
 
@@ -155,10 +143,11 @@ top-level directory.
             dump['tilesets'].append(get_data(tileset))
 
             # write a blank image
-            blank = Image.new("RGBA", (1,1), tileset.options.get('bgcolor'))
+            blank = Image.new("RGBA", (1, 1), tileset.options.get('bgcolor'))
             if tileset.options.get('imgformat') != 'png':
                 blank = blank.convert("RGB")
-            blank.save(os.path.join(self.outputdir, tileset.options.get('name'), "blank." + tileset.options.get('imgformat')))
+            blank.save(os.path.join(self.outputdir, tileset.options.get('name'),
+                                    "blank." + tileset.options.get('imgformat')))
 
         # write out config
         jsondump = json.dumps(dump, indent=4)
@@ -176,14 +165,14 @@ top-level directory.
                                      "overviewer_core", "data", "web_assets")
         if not os.path.isdir(global_assets):
             global_assets = os.path.join(util.get_program_path(), "web_assets")
-        mirror_dir(global_assets, self.outputdir, capabilities=self.fs_caps)
+        mirror_dir(global_assets, self.outputdir, capabilities=self.fs_caps, force_writable=True)
 
         if self.custom_assets_dir:
             # We could have done something fancy here rather than just
             # overwriting the global files, but apparently this what we used to
             # do pre-rewrite.
-            mirror_dir(self.custom_assets_dir, self.outputdir,
-                       capabilities=self.fs_caps)
+            mirror_dir(self.custom_assets_dir, self.outputdir, capabilities=self.fs_caps,
+                       force_writable=True)
 
         # write a dummy baseMarkers.js if none exists
         basemarkers_path = os.path.join(self.outputdir, "baseMarkers.js")
@@ -213,10 +202,7 @@ top-level directory.
 
         index = codecs.open(indexpath, 'r', encoding='UTF-8').read()
         index = index.replace("{title}", "Minecraft Overviewer")
-        index = index.replace("{time}",
-                              time.strftime("%a, %d %b %Y %H:%M:%S %Z",
-                                            time.localtime())
-                              .decode(self.preferredencoding))
+        index = index.replace("{time}", time.strftime("%a, %d %b %Y %H:%M:%S %Z", time.localtime()))
         versionstr = "%s (%s)" % (util.findGitVersion(),
                                   util.findGitHash()[:7])
         index = index.replace("{version}", versionstr)

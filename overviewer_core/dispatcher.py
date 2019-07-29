@@ -13,14 +13,16 @@
 #    You should have received a copy of the GNU General Public License along
 #    with the Overviewer.  If not, see <http://www.gnu.org/licenses/>.
 
-import util
 import multiprocessing
 import multiprocessing.managers
-import Queue
+import queue
 import time
-from signals import Signal
 
-class Dispatcher(object):
+from . import util
+from .signals import Signal
+
+
+class Dispatcher:
     """This class coordinates the work of all the TileSet objects
     among one worker process. By subclassing this class and
     implementing setup_tilesets(), dispatch(), and close(), it is
@@ -51,7 +53,7 @@ class Dispatcher(object):
 
         # iterate through all possible phases
         num_phases = [tileset.get_num_phases() for tileset in tilesetlist]
-        for phase in xrange(max(num_phases)):
+        for phase in range(max(num_phases)):
             # construct a list of iterators to use for this phase
             work_iterators = []
             for i, tileset in enumerate(tilesetlist):
@@ -79,7 +81,7 @@ class Dispatcher(object):
                 observer.add(self._dispatch_jobs())
 
             # after each phase, wait for the work to finish
-            while len(self._pending_jobs) > 0 or len(self._running_jobs) > 0:
+            while self._pending_jobs or self._running_jobs:
                 observer.add(self._dispatch_jobs())
 
             observer.finish()
@@ -108,7 +110,7 @@ class Dispatcher(object):
 
         # make sure to at least get finished jobs, even if we don't
         # submit any new ones...
-        if len(dispatched_jobs) == 0:
+        if not dispatched_jobs:
             finished_jobs += self.dispatch(None, None)
 
         # clean out the appropriate lists
@@ -139,10 +141,11 @@ class Dispatcher(object):
         that have completed since the last call. If tileset is None,
         then returning completed jobs is all this function should do.
         """
-        if not tileset is None:
+        if tileset is not None:
             tileset.do_work(workitem)
-            return [(tileset, workitem),]
+            return [(tileset, workitem)]
         return []
+
 
 class MultiprocessingDispatcherManager(multiprocessing.managers.BaseManager):
     """This multiprocessing manager is responsible for giving worker
@@ -151,10 +154,13 @@ class MultiprocessingDispatcherManager(multiprocessing.managers.BaseManager):
     """
     def _get_job_queue(self):
         return self.job_queue
+
     def _get_results_queue(self):
         return self.result_queue
+
     def _get_signal_queue(self):
         return self.signal_queue
+
     def _get_tileset_data(self):
         return self.tileset_data
 
@@ -170,7 +176,8 @@ class MultiprocessingDispatcherManager(multiprocessing.managers.BaseManager):
         self.register("get_job_queue", callable=self._get_job_queue)
         self.register("get_result_queue", callable=self._get_results_queue)
         self.register("get_signal_queue", callable=self._get_signal_queue)
-        self.register("get_tileset_data", callable=self._get_tileset_data, proxytype=multiprocessing.managers.ListProxy)
+        self.register("get_tileset_data", callable=self._get_tileset_data,
+                      proxytype=multiprocessing.managers.ListProxy)
 
         super(MultiprocessingDispatcherManager, self).__init__(address=address, authkey=authkey)
 
@@ -235,7 +242,7 @@ class MultiprocessingDispatcherProcess(multiprocessing.Process):
             def handler(*args, **kwargs):
                 self.signal_queue.put((name, args, kwargs), False)
             sig.set_interceptor(handler)
-        for name, sig in Signal.signals.iteritems():
+        for name, sig in Signal.signals.items():
             register_signal(name, sig)
 
         # notify that we're starting up
@@ -243,7 +250,7 @@ class MultiprocessingDispatcherProcess(multiprocessing.Process):
         while True:
             try:
                 job = self.job_queue.get(True, timeout)
-                if job == None:
+                if job is None:
                     # this is a end-of-jobs sentinel
                     return
 
@@ -259,8 +266,11 @@ class MultiprocessingDispatcherProcess(multiprocessing.Process):
                 ret = self.tilesets[ti].do_work(workitem)
                 result = (ti, workitem, ret,)
                 self.result_queue.put(result, False)
-            except Queue.Empty:
+            except queue.Empty:
                 pass
+            except KeyboardInterrupt:
+                return
+
 
 class MultiprocessingDispatcher(Dispatcher):
     """A subclass of Dispatcher that spawns worker processes and
@@ -288,7 +298,7 @@ class MultiprocessingDispatcher(Dispatcher):
 
         # create and fill the pool
         self.pool = []
-        for i in xrange(self.local_procs):
+        for i in range(self.local_procs):
             proc = MultiprocessingDispatcherProcess(self.manager)
             proc.start()
             self.pool.append(proc)
@@ -300,7 +310,7 @@ class MultiprocessingDispatcher(Dispatcher):
             self._handle_messages()
 
         # send of the end-of-jobs sentinel
-        for p in xrange(self.num_workers):
+        for p in range(self.num_workers):
             self.job_queue.put(None, False)
 
         # TODO better way to be sure worker processes get the message
@@ -342,7 +352,7 @@ class MultiprocessingDispatcher(Dispatcher):
                 try:
                     result = self.result_queue.get(False)
 
-                    if result != None:
+                    if result is not None:
                         # completed job
                         ti, workitem, ret = result
                         finished_jobs.append((self.manager.tilesets[ti], workitem))
@@ -350,7 +360,7 @@ class MultiprocessingDispatcher(Dispatcher):
                     else:
                         # new worker
                         self.num_workers += 1
-                except Queue.Empty:
+                except queue.Empty:
                     result_empty = True
             if not signal_empty:
                 try:
@@ -363,7 +373,7 @@ class MultiprocessingDispatcher(Dispatcher):
 
                     sig = Signal.signals[name]
                     sig.emit_intercepted(*args, **kwargs)
-                except Queue.Empty:
+                except queue.Empty:
                     signal_empty = True
 
         return finished_jobs

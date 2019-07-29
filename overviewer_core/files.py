@@ -62,7 +62,7 @@ def does_rename_work(dir_to_test):
     return renameworks
 
 ## useful recursive copy, that ignores common OS cruft
-def mirror_dir(src, dst, entities=None, capabilities=default_caps):
+def mirror_dir(src, dst, entities=None, capabilities=default_caps, force_writable=False):
     '''copies all of the entities from src to dst'''
     chmod_works = capabilities.get("chmod_works")
     if not os.path.exists(dst):
@@ -80,11 +80,14 @@ def mirror_dir(src, dst, entities=None, capabilities=default_caps):
             continue
         
         if os.path.isdir(os.path.join(src,entry)):
-            mirror_dir(os.path.join(src, entry), os.path.join(dst, entry), capabilities=capabilities)
+            mirror_dir(os.path.join(src, entry), os.path.join(dst, entry), capabilities=capabilities, force_writable=force_writable)
         elif os.path.isfile(os.path.join(src,entry)):
             try:
                 if chmod_works:
                     shutil.copy(os.path.join(src, entry), os.path.join(dst, entry))
+                    if force_writable:  # for shitty neckbeard ware
+                        dst_stat = os.stat(os.path.join(dst, entry))
+                        os.chmod(os.path.join(dst, entry), dst_stat.st_mode | stat.S_IWUSR)
                 else:
                     shutil.copyfile(os.path.join(src, entry), os.path.join(dst, entry))
             except IOError as outer: 
@@ -99,6 +102,9 @@ def mirror_dir(src, dst, entities=None, capabilities=default_caps):
                 # try again; if this stills throws an error, let it propagate up
                 if chmod_works:
                     shutil.copy(os.path.join(src, entry), os.path.join(dst, entry))
+                    if force_writable:
+                        dst_stat = os.stat(os.path.join(dst, entry))
+                        os.chmod(os.path.join(dst, entry), dst_stat.st_mode | stat.S_IWUSR)
                 else:
                     shutil.copyfile(os.path.join(src, entry), os.path.join(dst, entry))
 
@@ -144,7 +150,7 @@ class FileReplacer(object):
                 # error
                 try:
                     os.remove(self.tmpname)
-                except Exception, e:
+                except Exception as e:
                     logging.warning("An error was raised, so I was doing "
                             "some cleanup first, but I couldn't remove "
                             "'%s'!", self.tmpname)
@@ -153,7 +159,7 @@ class FileReplacer(object):
                 if self.caps.get("chmod_works") and os.path.exists(self.destname):
                     try:
                         shutil.copymode(self.destname, self.tmpname)
-                    except OSError, e:
+                    except OSError as e:
                         # Ignore errno ENOENT: file does not exist. Due to a race
                         # condition, two processes could conceivably try and update
                         # the same temp file at the same time
@@ -162,7 +168,7 @@ class FileReplacer(object):
                 # atomic rename into place
                 try:
                     os.rename(self.tmpname, self.destname)
-                except OSError, e:
+                except OSError as e:
                     # Ignore errno ENOENT: file does not exist. Due to a race
                     # condition, two processes could conceivably try and update
                     # the same temp file at the same time

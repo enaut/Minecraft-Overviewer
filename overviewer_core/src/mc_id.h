@@ -3,8 +3,7 @@
 
 #include <stdint.h>
 
-enum mc_block_id
-{
+enum mc_block_id {
     block_air = 0,
     block_stone = 1,
     block_grass = 2,
@@ -261,9 +260,9 @@ enum mc_block_id
     block_prismarine_stairs = 11337,
     block_dark_prismarine_stairs = 11338,
     block_prismarine_brick_stairs = 11339,
-    block_prismarine_slab  = 11340,
+    block_prismarine_slab = 11340,
     block_dark_prismarine_slab = 11341,
-    block_prismarine_brick_slab  = 11342,
+    block_prismarine_brick_slab = 11342,
     block_andesite_slab = 11343,
     block_diorite_slab = 11344,
     block_granite_slab = 11345,
@@ -280,13 +279,25 @@ enum mc_block_id
     block_mossy_stone_brick_slab = 11356,
     block_smooth_quartz_slab = 11357,
     block_smooth_stone_slab = 11358,
+    block_fletching_table = 11359,
+    block_cartography_table = 11360,
+    block_smithing_table = 11361,
+    block_blast_furnace = 11362,
+    // block_blast_furnace lit 11363
+    block_smoker = 11364,
+    // block_smoker lit = 11365,
+    block_lectern = 11366,
+    block_loom = 11367,
+    block_stonecutter = 11368,
+    block_grindstone = 11369,
+    block_mossy_stone_brick_stairs = 11370,
+    block_mossy_cobblestone_stairs = 11371,
+    block_mossy_stone_brick_wall = 11372,
 };
 
 typedef uint16_t mc_block_t;
 
-
-enum mc_item_id
-{
+enum mc_item_id {
     item_iron_shovel = 256,
     item_iron_pickaxe = 257,
     item_iron_axe = 258,

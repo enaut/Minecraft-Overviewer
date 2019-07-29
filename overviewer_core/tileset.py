@@ -26,13 +26,13 @@ import stat
 import sys
 import time
 from collections import namedtuple
-from itertools import chain, izip, product
+from itertools import chain, product
 
 from PIL import Image
 
-import c_overviewer
-import rendermodes
-from c_overviewer import resize_half
+from . import c_overviewer
+from . import rendermodes
+from .c_overviewer import resize_half
 
 from . import nbt, world
 from .files import FileReplacer, get_fs_caps
@@ -95,7 +95,7 @@ do_work(workobj)
 # small but useful
 def iterate_base4(d):
     """Iterates over a base 4 number with d digits"""
-    return product(xrange(4), repeat=d)
+    return product(range(4), repeat=d)
 
 
 # A named tuple class storing the row and column bounds for the to-be-rendered
@@ -589,7 +589,9 @@ class TileSet(object):
             imgextension=self.imgextension,
             isOverlay=isOverlay,
             poititle=self.options.get("poititle"),
-            showlocationmarker=self.options.get("showlocationmarker")
+            showlocationmarker=self.options.get("showlocationmarker"),
+            center=(self.options.get("center") or self.options.get("spawn")
+                    or [0, 64, 0])
         )
         d['maxZoom'] = self.options.get('maxzoom', self.treedepth)
         if d['maxZoom'] < 0:
@@ -646,7 +648,7 @@ class TileSet(object):
         bounds = self._find_chunk_range()
 
         # Calculate the depth of the tree
-        for p in xrange(2, 33):  # max 32
+        for p in range(2, 33):  # max 32
             # Will 2^p tiles wide and high suffice?
 
             # X has twice as many chunks as tiles, then halved since this is a
@@ -686,13 +688,13 @@ class TileSet(object):
             if self.treedepth > curdepth:
                 logging.warning("Your map seems to have expanded beyond its previous bounds.")
                 logging.warning("Doing some tile re-arrangements... just a sec...")
-                for _ in xrange(self.treedepth - curdepth):
+                for _ in range(self.treedepth - curdepth):
                     self._increase_depth()
             elif self.treedepth < curdepth:
                 logging.warning(
                     "Your map seems to have shrunk. Did you delete some "
                     "chunks? No problem. Re-arranging tiles, just a sec...")
-                for _ in xrange(curdepth - self.treedepth):
+                for _ in range(curdepth - self.treedepth):
                     self._decrease_depth()
                 logging.info(
                     "There, done. I'm switching to --check-tiles mode for "
@@ -798,12 +800,12 @@ class TileSet(object):
             os.rename(getpath("new3"), getpath("3"))
 
         # Delete the files in the top directory to make sure they get re-created.
-        files = [str(num) + "." + self.imgextension for num in xrange(4)] + \
+        files = [str(num) + "." + self.imgextension for num in range(4)] + \
             ["base." + self.imgextension]
         for f in files:
             try:
                 os.unlink(getpath(f))
-            except OSError, e:
+            except OSError as e:
                 # Ignore file doesn't exist errors
                 if e.errno != errno.ENOENT:
                     raise
@@ -964,7 +966,7 @@ class TileSet(object):
         if not quadPath_filtered:
             try:
                 os.unlink(imgpath)
-            except OSError, e:
+            except OSError as e:
                 # Ignore errors if it's "file doesn't exist"
                 if e.errno != errno.ENOENT:
                     raise
@@ -988,14 +990,14 @@ class TileSet(object):
                 quad = Image.new("RGBA", (192, 192), self.options['bgcolor'])
                 resize_half(quad, src)
                 img.paste(quad, path[0])
-            except Exception, e:
+            except Exception as e:
                 logging.warning("Couldn't open %s. It may be corrupt. Error was '%s'.", path[1], e)
                 logging.warning(
                     "I'm going to try and delete it. You will need to run "
                     "the render again and with --check-tiles.")
                 try:
                     os.unlink(path[1])
-                except Exception, e:
+                except Exception as e:
                     logging.error(
                         "While attempting to delete corrupt image %s, an error was encountered. "
                         "You will need to delete it yourself. Error was '%s'", path[1], e)
@@ -1016,7 +1018,7 @@ class TileSet(object):
 
             try:
                 os.utime(tmppath, (max_mtime, max_mtime))
-            except OSError, e:
+            except OSError as e:
                 # Ignore errno ENOENT: file does not exist. Due to a race
                 # condition, two processes could conceivably try and update
                 # the same temp file at the same time
@@ -1049,7 +1051,7 @@ class TileSet(object):
                             "This may be a bug.", tile)
             try:
                 os.unlink(imgpath)
-            except OSError, e:
+            except OSError as e:
                 # ignore only if the error was "file not found"
                 if e.errno != errno.ENOENT:
                     raise
@@ -1062,7 +1064,7 @@ class TileSet(object):
         if not os.path.exists(dirdest):
             try:
                 os.makedirs(dirdest)
-            except OSError, e:
+            except OSError as e:
                 # Ignore errno EEXIST: file exists. Due to a race condition,
                 # two processes could conceivably try and create the same
                 # directory at the same time
@@ -1098,7 +1100,7 @@ class TileSet(object):
                 # Some chunks are present on disk but not fully initialized.
                 # This is okay.
                 pass
-            except Exception, e:
+            except Exception as e:
                 logging.error("Could not render chunk %s,%s for some reason. "
                               "This is likely a render primitive option error.", chunkx, chunkz)
                 logging.error("Full error was:", exc_info=1)
@@ -1154,7 +1156,7 @@ class TileSet(object):
             imgpath = tileobj.get_filepath(self.outputdir, self.imgextension)
             try:
                 tile_mtime = os.stat(imgpath)[stat.ST_MTIME]
-            except OSError, e:
+            except OSError as e:
                 if e.errno != errno.ENOENT:
                     raise
                 tile_mtime = 0
@@ -1198,7 +1200,7 @@ class TileSet(object):
             max_child_mtime = 0
 
             # First, recurse to each of our children
-            for childnum in xrange(4):
+            for childnum in range(4):
                 childpath = path + (childnum,)
 
                 # Check if this sub-tree should actually exist, so that we only
@@ -1238,7 +1240,7 @@ class TileSet(object):
                 logging.debug("Testing mtime for composite-tile %s", imgpath)
                 try:
                     tile_mtime = os.stat(imgpath)[stat.ST_MTIME]
-                except OSError, e:
+                except OSError as e:
                     if e.errno != errno.ENOENT:
                         raise
                     tile_mtime = 0
@@ -1296,7 +1298,7 @@ def unconvert_coords(col, row):
 
     # col + row = chunkz + chunkz => (col + row)/2 = chunkz
     # col - row = chunkx + chunkx => (col - row)/2 = chunkx
-    return ((col - row) / 2, (col + row) / 2)
+    return ((col - row) // 2, (col + row) // 2)
 
 
 ######################
@@ -1325,9 +1327,9 @@ def get_tiles_by_chunk(chunkcol, chunkrow):
     # tile above it as well. Also touches the next 4 tiles down (16
     # rows)
     if chunkrow % 4 == 0:
-        rowrange = xrange(tilerow - 4, tilerow + 32 + 1, 4)
+        rowrange = range(tilerow - 4, tilerow + 32 + 1, 4)
     else:
-        rowrange = xrange(tilerow, tilerow + 32 + 1, 4)
+        rowrange = range(tilerow, tilerow + 32 + 1, 4)
 
     return product(colrange, rowrange)
 
@@ -1358,13 +1360,13 @@ def get_chunks_by_tile(tile, regionset):
     # First do the odd. For each chunk in the tile's odd column the tile
     # "passes through" three chunk sections.
     oddcol_sections = []
-    for i, y in enumerate(reversed(xrange(16))):
-        for row in xrange(tile.row + 3 - i * 2, tile.row - 2 - i * 2, -2):
+    for i, y in enumerate(reversed(range(16))):
+        for row in range(tile.row + 3 - i * 2, tile.row - 2 - i * 2, -2):
             oddcol_sections.append((tile.col + 1, row, y))
 
     evencol_sections = []
-    for i, y in enumerate(reversed(xrange(16))):
-        for row in xrange(tile.row + 4 - i * 2, tile.row - 3 - i * 2, -2):
+    for i, y in enumerate(reversed(range(16))):
+        for row in range(tile.row + 4 - i * 2, tile.row - 3 - i * 2, -2):
             evencol_sections.append((tile.col + 2, row, y))
             evencol_sections.append((tile.col, row, y))
 
@@ -1589,7 +1591,7 @@ class RendertileSet(object):
         # or more of the children down the tree are True.
         return True
 
-    def __nonzero__(self):
+    def __bool__(self):
         """Returns the boolean context of this particular node. If any
         descendent of this node is True return True. Otherwise, False.
 
@@ -1604,8 +1606,8 @@ class RendertileSet(object):
         # XXX There seems to be something wrong with the num_tiles calculation.
         # Calculate the number of tiles by iteration and emit a warning if it
         # does not match.
-        from itertools import imap
-        num = sum(imap(lambda _: 1, self.iterate()))
+        
+        num = sum(map(lambda _: 1, self.iterate()))
         if num != self.num_tiles:
             logging.error("Please report this to the developers: RendertileSet num_tiles=%r, "
                           "count=%r, children=%r", self.num_tiles, num, self.children)
@@ -1619,22 +1621,23 @@ class RendertileSet(object):
         # XXX There seems to be something wrong with the num_tiles calculation.
         # Calculate the number of tiles by iteration and emit a warning if it
         # does not match.
-        from itertools import imap
-        num = sum(imap(lambda _: 1, self.posttraversal()))
+        
+        num = sum(map(lambda _: 1, self.posttraversal()))
         if num != self.num_tiles_all:
             logging.error("Please report this to the developers: RendertileSet num_tiles_all=%r, "
                           "count_all=%r, children=%r", self.num_tiles, num, self.children)
         return num
 
 
-def distance_sort(children, (off_x, off_y)):
+def distance_sort(children, xxx_todo_changeme):
+    (off_x, off_y) = xxx_todo_changeme
     order = []
-    for child, (dx, dy) in izip(children, [(-1, -1), (1, -1), (-1, 1), (1, 1)]):
+    for child, (dx, dy) in zip(children, [(-1, -1), (1, -1), (-1, 1), (1, 1)]):
         x = off_x * 2 + dx
         y = off_y * 2 + dy
         order.append((child, (x, y)))
 
-    return sorted(order, key=lambda (_, (x, y)): x * x + y * y)
+    return sorted(order, key=lambda __x_y: __x_y[1][0] * __x_y[1][0] + __x_y[1][1] * __x_y[1][1])
 
 
 class RenderTile(object):
@@ -1733,7 +1736,7 @@ class RenderTile(object):
 
         path = []
 
-        for level in xrange(depth):
+        for level in range(depth):
             # Strategy: Find the midpoint of this level, and determine which
             # quadrant this row/col is in. Then set the bounds to that level
             # and repeat

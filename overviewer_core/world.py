@@ -53,7 +53,7 @@ def log_other_exceptions(func):
             return func(*args)
         except ChunkDoesntExist:
             raise
-        except Exception, e:
+        except Exception as e:
             logging.exception("%s raised this exception", func.func_name)
             raise
     return newfunc
@@ -134,7 +134,7 @@ class World(object):
             if mcas:
                 # construct a regionset object for this
                 rel = os.path.relpath(root, self.worlddir)
-                if rel != "poi":
+                if os.path.basename(rel) != "poi":
                     rset = RegionSet(root, rel)
                     if root == os.path.join(self.worlddir, "region"):
                         self.regionsets.insert(0, rset)
@@ -799,6 +799,15 @@ class RegionSet(object):
             "minecraft:fletching_table": (11359, 0),
             "minecraft:cartography_table": (11360, 0),
             "minecraft:smithing_table": (11361, 0),
+            "minecraft:blast_furnace": (11362, 0),
+            "minecraft:smoker": (11364, 0),
+            "minecraft:lectern": (11366, 0),
+            "minecraft:loom": (11367, 0),
+            "minecraft:stonecutter": (11368, 0),
+            "minecraft:grindstone": (11369, 0),
+            "minecraft:mossy_stone_brick_stairs": (11370, 0),
+            "minecraft:mossy_cobblestone_stairs": (11371, 0),
+            "minecraft:mossy_stone_brick_wall": (11372, 0),
         }
 
         colors = [   'white', 'orange', 'magenta', 'light_blue',
@@ -822,6 +831,13 @@ class RegionSet(object):
 
     def __repr__(self):
         return "<RegionSet regiondir=%r>" % self.regiondir
+
+    def __lt__(self, other):
+        """This garbage is only needed because genPOI wants to use
+        itertools.groupby, which needs sorted keys, and Python 2 somehow
+        just sorted objects like ???????? how????? why?????
+        """
+        return self.regiondir < other.regiondir
 
     def _get_block(self, palette_entry):
         wood_slabs = ('minecraft:oak_slab','minecraft:spruce_slab','minecraft:birch_slab','minecraft:jungle_slab',
@@ -852,7 +868,7 @@ class RegionSet(object):
                 data += 4
         elif key.endswith('rail'):
             shape = palette_entry['Properties']['shape']
-            data = {'north_south':0, 'east_west': 1, 'ascending_east': 2, 'ascending_west': 3, 'ascending_north': 4, 'ascending_south': 5, 'south_west': 6, 'south_east': 7, 'north_east': 8, 'north_west': 9}[shape]
+            data = {'north_south':0, 'east_west': 1, 'ascending_east': 2, 'ascending_west': 3, 'ascending_north': 4, 'ascending_south': 5, 'south_east': 6, 'south_west': 7, 'north_west': 8, 'north_east': 9}[shape]
             if key == 'minecraft:powered_rail' and palette_entry['Properties']['powered'] == 'true':
                 data |= 8
         elif key in ['minecraft:comparator', 'minecraft:repeater']:
@@ -1157,39 +1173,25 @@ class RegionSet(object):
     def _get_blockdata_v113(self, section, unrecognized_block_types):
         # Translate each entry in the palette to a 1.2-era (block, data) int pair.
         num_palette_entries = len(section['Palette'])
-        palette_translated = [] # (block, data) pairs, num_palette_entries in length
-        palette_block_counts = [] # ints, num_palette_entries in length
-        unrecognized_palette_entries = []
+        translated_blocks = numpy.zeros((num_palette_entries,), dtype=numpy.uint16) # block IDs
+        translated_data = numpy.zeros((num_palette_entries,), dtype=numpy.uint8) # block data
         for i in range(num_palette_entries):
             key = section['Palette'][i]
-            palette_block_counts.append(0)
             try:
-                palette_translated.append(self._get_block(key))
-            except KeyError as e:
-                # Unknown block type? Track it, treat it as air, and move on.
-                unrecognized_palette_entries.append(i)
-                palette_translated.append(self._blockmap['minecraft:air'])
+                translated_blocks[i], translated_data[i] = self._get_block(key)
+            except KeyError:
+                pass    # We already have initialised arrays with 0 (= air)
 
         # Turn the BlockStates array into a 16x16x16 numpy matrix of shorts.
-        blocks = numpy.zeros((4096,), dtype=numpy.uint16)
-        data = numpy.zeros((4096,), dtype=numpy.uint8)
+        blocks = numpy.empty((4096,), dtype=numpy.uint16)
+        data = numpy.empty((4096,), dtype=numpy.uint8)
         block_states = self._packed_longarray_to_shorts(section['BlockStates'], 4096)
-        for i in range(4096):
-            palette_index = block_states[i]
-            (blocks[i], data[i]) = palette_translated[palette_index]
-            palette_block_counts[palette_index] += 1
+        blocks[:] = translated_blocks[block_states]
+        data[:] = translated_data[block_states]
 
         # Turn the Data array into a 16x16x16 matrix, same as SkyLight
         blocks  = blocks.reshape((16, 16, 16))
         data = data.reshape((16, 16, 16))
-
-        for i in unrecognized_palette_entries:
-            if palette_block_counts[i] > 0:
-                palette_entry = section['Palette'][i]
-                k = palette_entry['Name']
-                if 'Properties' in palette_entry:
-                    k += " %s" % str(palette_entry['Properties'])
-                unrecognized_block_types[k] = unrecognized_block_types.get(k, 0) + palette_block_counts[i]
 
         return (blocks, data)
 
@@ -1261,7 +1263,7 @@ class RegionSet(object):
             try:
                 region = self._get_regionobj(regionfile)
                 data = region.load_chunk(x, z)
-            except nbt.CorruptionError, e:
+            except nbt.CorruptionError as e:
                 tries -= 1
                 if tries > 0:
                     # Flush the region cache to possibly read a new region file
@@ -1311,10 +1313,10 @@ class RegionSet(object):
                                                 "mobs_spawned", ""):
             raise ChunkDoesntExist("Chunk %s,%s doesn't exist" % (x,z))
 
-        # Turn the Biomes array into a 16x16 numpy arra
+        # Turn the Biomes array into a 16x16 numpy array
         if 'Biomes' in chunk_data and len(chunk_data['Biomes']) > 0:
             biomes = chunk_data['Biomes']
-            if isinstance(biomes, str):
+            if isinstance(biomes, bytes):
                 biomes = numpy.frombuffer(biomes, dtype=numpy.uint8)
             else:
                 biomes = numpy.asarray(biomes)
@@ -1385,7 +1387,7 @@ class RegionSet(object):
 
         """
 
-        for (regionx, regiony), (regionfile, filemtime) in self.regionfiles.iteritems():
+        for (regionx, regiony), (regionfile, filemtime) in self.regionfiles.items():
             try:
                 mcr = self._get_regionobj(regionfile)
             except nbt.CorruptRegionError:
@@ -1401,7 +1403,7 @@ class RegionSet(object):
 
         """
 
-        for (regionx, regiony), (regionfile, filemtime) in self.regionfiles.iteritems():
+        for (regionx, regiony), (regionfile, filemtime) in self.regionfiles.items():
             """ SKIP LOADING A REGION WHICH HAS NOT BEEN MODIFIED! """
             if (filemtime < mtime):
                 continue
@@ -1475,6 +1477,15 @@ class RegionSetWrapper(object):
     """
     def __init__(self, rsetobj):
         self._r = rsetobj
+
+    def __lt__(self, other):
+        """This garbage is only needed because genPOI wants to use
+        itertools.groupby, which needs sorted keys, and Python 2 somehow
+        just sorted objects like ???????? how????? why?????
+        """
+        if isinstance(other, RegionSetWrapper):
+            other = other._r
+        return self._r.regiondir < other.regiondir
 
     def get_type(self):
         return self._r.get_type()
@@ -1695,7 +1706,6 @@ def get_worlds():
     "Returns {world # or name : level.dat information}"
     ret = {}
     save_dir = get_save_dir()
-    loc = locale.getpreferredencoding()
 
     # No dirs found - most likely not running from inside minecraft-dir
     if not save_dir is None:
@@ -1705,14 +1715,15 @@ def get_worlds():
             if not os.path.exists(world_dat): continue
             try:
                 info = nbt.load(world_dat)[1]
-                info['Data']['path'] = os.path.join(save_dir, dir).decode(loc)
+                info['Data']['path'] = os.path.join(save_dir, dir)
                 if 'LevelName' in info['Data'].keys():
                     ret[info['Data']['LevelName']] = info['Data']
             except nbt.CorruptNBTError:
-                ret[os.path.basename(world_path).decode(loc) + " (corrupt)"] = {'path': world_path.decode(loc),
-                        'LastPlayed': 0,
-                        'Time': 0,
-                        'IsCorrupt': True}
+                ret[os.path.basename(world_path) + " (corrupt)"] = {
+                    'path': world_path,
+                    'LastPlayed': 0,
+                    'Time': 0,
+                    'IsCorrupt': True}
 
 
     for dir in os.listdir("."):
@@ -1721,11 +1732,11 @@ def get_worlds():
         world_path = os.path.join(".", dir)
         try:
             info = nbt.load(world_dat)[1]
-            info['Data']['path'] = world_path.decode(loc)
+            info['Data']['path'] = world_path
             if 'LevelName' in info['Data'].keys():
                 ret[info['Data']['LevelName']] = info['Data']
         except nbt.CorruptNBTError:
-            ret[os.path.basename(world_path).decode(loc) + " (corrupt)"] = {'path': world_path.decode(loc),
+            ret[os.path.basename(world_path) + " (corrupt)"] = {'path': world_path,
                     'LastPlayed': 0,
                     'Time': 0,
                     'IsCorrupt': True}

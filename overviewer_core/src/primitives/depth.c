@@ -18,34 +18,35 @@
 #include "../overviewer.h"
 
 typedef struct {
-    unsigned int min;
-    unsigned int max;
+    int32_t min;
+    int32_t max;
 } PrimitiveDepth;
 
-static int
-depth_start(void *data, RenderState *state, PyObject *support) {
-    PrimitiveDepth *self = (PrimitiveDepth *)data;
-    
-    if (!render_mode_parse_option(support, "min", "I", &(self->min)))
-        return 1;
-    if (!render_mode_parse_option(support, "max", "I", &(self->max)))
-        return 1;
+static bool
+depth_start(void* data, RenderState* state, PyObject* support) {
+    PrimitiveDepth* self = (PrimitiveDepth*)data;
 
-    return 0;
+    if (!render_mode_parse_option(support, "min", "I", &(self->min)))
+        return true;
+    if (!render_mode_parse_option(support, "max", "I", &(self->max)))
+        return true;
+
+    return false;
 }
 
-static int
-depth_hidden(void *data, RenderState *state, int x, int y, int z) {
-    PrimitiveDepth *self = (PrimitiveDepth *)data;
+static bool
+depth_hidden(void* data, RenderState* state, int32_t x, int32_t y, int32_t z) {
+    PrimitiveDepth* self = (PrimitiveDepth*)data;
     y += 16 * state->chunky;
     if (y > self->max || y < self->min) {
-        return 1;
+        return true;
     }
-    return 0;
+    return false;
 }
 
 RenderPrimitiveInterface primitive_depth = {
-    "depth", sizeof(PrimitiveDepth),
+    "depth",
+    sizeof(PrimitiveDepth),
     depth_start,
     NULL,
     NULL,
