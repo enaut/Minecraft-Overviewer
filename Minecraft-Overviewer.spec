@@ -8,8 +8,8 @@ Group: Development/Libraries
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Packager: Franz Dietrich <dietrich@teilgedanken.de>
 Url: http://overviewer.org/
-Requires: python-imaging, numpy
-BuildRequires: gcc, python2-devel, python-imaging-devel, numpy
+Requires: python3-pillow, python3-numpy
+BuildRequires: gcc, python3-devel, python3-pillow-devel, python3-numpy
 Provides: overviewer
 
 %description
@@ -21,10 +21,10 @@ uses the Leaflet viewer to display an interactive map.
 %setup
 
 %build
-env CFLAGS="$RPM_OPT_FLAGS" %{__python2} setup.py build
+env CFLAGS="$RPM_OPT_FLAGS" %{__python3} setup.py build
 
 %install
-%{__python2} setup.py install -O1 --root=%{buildroot}
+%{__python3} setup.py install -O1 --root=%{buildroot}
 ln -s %{_bindir}/overviewer.py %{buildroot}%{_bindir}/overviewer
 rm -rf %{buildroot}%{_defaultdocdir}/minecraft-overviewer
 
@@ -33,8 +33,8 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
-%{python2_sitearch}/Minecraft_Overviewer-*-*.egg-info
-%{python2_sitearch}/overviewer_core
+%{python3_sitearch}/Minecraft_Overviewer-*-*.egg-info
+%{python3_sitearch}/overviewer_core
 %{_bindir}/overviewer.py
 %{_bindir}/overviewer
 %doc README.rst COPYING.txt sample_config.py
@@ -710,4 +710,3 @@ rm -rf %{buildroot}
 
 * Sun Apr 24 2016 Franz Dietrich <dietricf@informatik.uni-freiburg.de> 0.12-3
 - new package built with tito
-
