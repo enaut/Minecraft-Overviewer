@@ -21,12 +21,10 @@ uses the Leaflet viewer to display an interactive map.
 %setup
 
 %build
-env CFLAGS="$RPM_OPT_FLAGS" %{__python3} setup.py build
+%py3_build
 
 %install
-%{__python3} setup.py install -O1 --root=%{buildroot}
-ln -s %{_bindir}/overviewer.py %{buildroot}%{_bindir}/overviewer
-rm -rf %{buildroot}%{_defaultdocdir}/minecraft-overviewer
+%py3_install
 
 %clean
 rm -rf %{buildroot}
