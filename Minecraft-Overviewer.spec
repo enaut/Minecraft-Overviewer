@@ -25,6 +25,9 @@ uses the Leaflet viewer to display an interactive map.
 
 %install
 %py3_install
+ln -s %{_bindir}/overviewer.py %{buildroot}%{_bindir}/overviewer
+rm -rf %{buildroot}%{_defaultdocdir}/minecraft-overviewer
+
 
 %clean
 rm -rf %{buildroot}
