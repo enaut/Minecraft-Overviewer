@@ -9,7 +9,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Packager: Franz Dietrich <dietrich@teilgedanken.de>
 Url: http://overviewer.org/
 Requires: (python3-pillow or python36-pillow), (python3-numpy or python36-numpy)
-BuildRequires: gcc, (python3-devel or python36-devel), (python3-pillow-devel or python36-pillow-devel), (python3-numpy or python36-numpy)
+BuildRequires: gcc, (python3-devel or python36-devel), (python3-pillow-devel or python36-pillow-devel), ((python3-numpy and python3-numpy-devel) or python3-numpy or python36-numpy)
 Provides: overviewer
 
 %description
