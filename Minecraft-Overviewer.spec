@@ -1,7 +1,7 @@
 Summary: Generates a map viewable with a webrowser.
 Name: minecraft-overviewer
 Version: 0.12
-Release: 26%{?dist}
+Release: 27%{?dist}
 Source0: %{name}-%{version}.tar.gz
 License: GNU General Public License v3
 Group: Development/Libraries
@@ -41,6 +41,9 @@ rm -rf %{buildroot}
 %doc README.rst COPYING.txt sample_config.py
 
 %changelog
+* Tue Jul 30 2019 Franz Dietrich <dietrich@teilgedanken.de> 0.12-27
+- fix mageia (dietrich@teilgedanken.de)
+
 * Tue Jul 30 2019 Franz Dietrich <dietrich@teilgedanken.de> 0.12-26
 - fix build on centos (dietrich@teilgedanken.de)
 
