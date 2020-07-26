@@ -167,9 +167,9 @@ class NBTFileReader(object):
         length = self._uint.unpack(self._file.read(4))[0]
 
         read_method = self._read_tagmap[tagid]
-        l = []
-        for _ in range(length):
-            l.append(read_method())
+        l = [None] * length
+        for i in range(length):
+            l[i] = read_method()
         return l
 
     def _read_tag_compound(self):
@@ -292,7 +292,10 @@ class MCRFileReader(object):
         self._file.seek(offset)
 
         # read in the chunk data header
-        header = self._file.read(5)
+        try:
+            header = self._file.read(5)
+        except OSError as e:
+            raise CorruptChunkError("An OSError occurred: {}".format(e.strerror))
         if len(header) != 5:
             raise CorruptChunkError("chunk header is invalid")
         data_length, compression = self._chunk_header_format.unpack(header)

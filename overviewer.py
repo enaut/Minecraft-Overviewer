@@ -365,7 +365,7 @@ def main():
 
     ############################################################
     # Final validation steps and creation of the destination directory
-    logging.info("Welcome to Minecraft Overviewer!")
+    logging.info("Welcome to Minecraft Overviewer version %s (%s)!" % (util.findGitVersion(), util.findGitHash()[:7]))
     logging.debug("Current log level: {0}.".format(logging.getLogger().level))
 
     def set_renderchecks(checkname, num):
@@ -513,7 +513,7 @@ def main():
                           "files in the world directory?")
             return 1
         if rset is None:    # indicates no such dimension was found
-            logging.warn("Sorry, you requested dimension '%s' for %s, but I couldn't find it.",
+            logging.warning("Sorry, you requested dimension '%s' for %s, but I couldn't find it.",
                          render['dimension'][0], render_name)
             continue
 

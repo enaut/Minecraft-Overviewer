@@ -265,19 +265,22 @@ If you want or need to provide your own textures, you have several options:
 
   You can use the following commands to download the client jar on Linux or Mac.
   Run the first line in a terminal, changing the version string to the latest as appropriate
-  (these docs may not always be updated to reflect the latest). Then paste the second line
+  (these docs may not always be updated to reflect the latest). Then paste the second line into
+  your terminal to create directories if necessary. Then paste the third line
   into your terminal to download the latest version. ``${VERSION}`` will be replaced
-  by the actual version string from the first line.
+  by the actual version string from the first line. These 3 lines can be included in a shell
+  script prior to map generation to ensure the proper textures are always downloaded.
 
   ::
 
-    VERSION=1.14
+    VERSION=1.15
+    mkdir -p ~/.minecraft/versions/${VERSION}/
     wget https://overviewer.org/textures/${VERSION} -O ~/.minecraft/versions/${VERSION}/${VERSION}.jar
 
   If that's too confusing for you, then just take this single line and paste it into
-  a terminal to get 1.14 textures::
+  a terminal to get 1.15 textures::
 
-    wget https://overviewer.org/textures/1.14 -O ~/.minecraft/versions/1.14/1.14.jar
+    wget https://overviewer.org/textures/1.15 -O ~/.minecraft/versions/1.15/1.15.jar
 
 * You can also just run the launcher to install the client.
 

@@ -148,12 +148,12 @@ class LoggingObserver(Observer):
 
     def _need_update(self):
         cur_val = self.get_current_value()
-        if cur_val < 100:
-            return cur_val - self.last_update > 10
-        elif cur_val < 500:
-            return cur_val - self.last_update > 50
+        if cur_val <= 100:
+            return cur_val - self.last_update >= 10
+        elif cur_val <= 500:
+            return cur_val - self.last_update >= 50
         else:
-            return cur_val - self.last_update > 100
+            return cur_val - self.last_update >= 100
 
 
 default_widgets = [
@@ -256,11 +256,10 @@ class JSObserver(Observer):
             raise Exception("JSObserver: messages parameter must be a "
                             "dictionary with three entries: totalTiles, "
                             "renderCompleted and renderProgress")
+        # On the initial render, the outputdir hasn't been created until after the observer is
+        # initialised, so let's just do it here if necessary.
         if not os.path.exists(outputdir):
-            raise Exception("JSObserver: Output directory specified (%s) "
-                            "doesn't appear to exist. This should be the "
-                            "same as the Overviewer output directory"
-                            % outputdir)
+            os.mkdir(outputdir)
 
         self.logfile = open(os.path.join(outputdir, "progress.json"), "wb+", 0)
         self.json["message"] = "Render starting..."

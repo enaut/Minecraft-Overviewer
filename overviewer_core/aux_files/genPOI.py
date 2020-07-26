@@ -37,6 +37,13 @@ from overviewer_core.files import FileReplacer, get_fs_caps
 UUID_LOOKUP_URL = 'https://sessionserver.mojang.com/session/minecraft/profile/'
 
 
+DIMENSION_INT_TO_STR = {
+    0: "minecraft:overworld",
+    -1: "minecraft:the_nether",
+    1: "minecraft:the_end"
+}
+
+
 def replaceBads(s):
     "Replaces bad characters with good characters!"
     bads = [" ", "(", ")"]
@@ -142,8 +149,8 @@ def parseBucketChunks(task_tuple):
         if i == 250:
             i = 0
             cnt = 250 + cnt
-            logging.info("Found %d markers in thread %d so far at %d chunks.",
-                         sum(len(v) for v in markers.values()), pid, cnt)
+            logging.debug("Found %d markers in thread %d so far at %d chunks.",
+                          sum(len(v) for v in markers.values()), pid, cnt)
 
     return markers
 
@@ -233,7 +240,7 @@ class PlayerDict(dict):
                     cls.uuid_cache = json.loads(gz.read().decode("utf-8"))
                     logging.info("Loaded UUID cache from %r with %d entries.",
                                  cache_file, len(cls.uuid_cache.keys()))
-            except (ValueError, IOError):
+            except (ValueError, IOError, EOFError):
                 logging.warning("Failed to load UUID cache -- it might be corrupt.")
                 cls.uuid_cache = {}
                 corrupted_cache = cache_file + ".corrupted." + datetime.datetime.now().isoformat()
@@ -279,7 +286,9 @@ class PlayerDict(dict):
             pass
 
         try:
-            profile = json.loads(urllib.request.urlopen(UUID_LOOKUP_URL + sname).read().decode("utf-8"))
+            profile = json.loads(
+                urllib.request.urlopen(UUID_LOOKUP_URL + sname).read().decode("utf-8")
+            )
             if 'name' in profile:
                 profile['retrievedAt'] = time.mktime(time.localtime())
                 PlayerDict.uuid_cache[sname] = profile
@@ -356,14 +365,19 @@ def handlePlayers(worldpath, filters, markers):
                 dimension = int(re.match(r"^DIM(_MYST)?(-?\d+)$", rset.get_type()).group(2))
             else:
                 dimension = 0
+            dimension = DIMENSION_INT_TO_STR.get(dimension, "minecraft:overworld")
 
-            if data.get('Dimension', 0) == dimension:
+            read_dim = data.get("Dimension", "minecraft:overworld")
+            if type(read_dim) == int:
+                read_dim = DIMENSION_INT_TO_STR.get(read_dim, "minecraft:overworld")
+
+            if read_dim == dimension:
                 result = filter_function(data)
                 if result:
                     d = create_marker_from_filter_result(data, result)
                     markers[name]['raw'].append(d)
 
-            if dimension == 0 and "SpawnX" in data:
+            if dimension == "minecraft:overworld" and "SpawnX" in data:
                 result = filter_function(spawn)
                 if result:
                     d = create_marker_from_filter_result(spawn, result)
@@ -410,26 +424,45 @@ def create_marker_from_filter_result(poi, result):
         d.update(dict(text=result[1], hovertext=result[0]))
     # Dict support to allow more flexible things in the future as well as polylines on the map.
     elif isinstance(result, dict):
-        d['text'] = result['text']
+        if 'text' in result:
+            d['text'] = result['text']
 
         # Use custom hovertext if provided...
         if 'hovertext' in result:
             d['hovertext'] = str(result['hovertext'])
         else:   # ...otherwise default to display text.
-            d['hovertext'] = result['text']
+            d['hovertext'] = result.get('text', '')
 
-        if 'polyline' in result and hasattr(result['polyline'], '__iter__'):
-            d['polyline'] = []
-            for point in result['polyline']:
-                # point.copy() would work, but this validates better
-                d['polyline'].append(dict(x=point['x'], y=point['y'], z=point['z']))
-            if isinstance(result['color'], str):
+        if "icon" in result:
+            d["icon"] = result['icon']
+        if "createInfoWindow" in result:
+            d["createInfoWindow"] = result['createInfoWindow']
+
+        # Polylines and polygons
+        if (('polyline' in result and hasattr(result['polyline'], '__iter__')) or
+            'polygon' in result and hasattr(result['polygon'], '__iter__')):
+            # If the points form a line or closed shape
+            d['isLine'] = 'polyline' in result
+            # Collect points
+            d['points'] = []
+            for point in (result['polyline'] if d['isLine'] else result['polygon']):
+                d['points'].append(dict(x=point['x'], y=point['y'], z=point['z']))
+
+            # Options and default values
+            if 'color' in result:
                 d['strokeColor'] = result['color']
+            else:
+                d['strokeColor'] = 'red'
 
-            if "icon" in result:
-                d["icon"] = result['icon']
-            if "createInfoWindow" in result:
-                d["createInfoWindow"] = result['createInfoWindow']
+            if 'fill' in result:
+                d['fill'] = result['fill']
+            else:
+                d['fill'] = not d['isLine']     # fill polygons by default
+
+            if 'weight' in result:
+                d['strokeWeight'] = result['weight']
+            else:
+                d['strokeWeight'] = 2
     else:
         raise ValueError("Got an %s as result for POI with id %s"
                          % (type(result).__name__, poi['id']))
@@ -447,6 +480,9 @@ def main():
     parser = ArgumentParser(prog=prog_name)
     parser.add_argument("-c", "--config", dest="config", action="store", required=True,
                         help="Specify the config file to use.")
+    parser.add_argument("-p", "--processes", dest="procs", action="store", type=int,
+                        help="The number of local worker processes to spawn. Defaults to the "
+                        "number of CPU cores your computer has.")
     parser.add_argument("-q", "--quiet", dest="quiet", action="count",
                         help="Reduce logging output")
     parser.add_argument("--skip-scan", dest="skipscan", action="store_true",
@@ -465,6 +501,8 @@ def main():
         mw_parser.parse(args.config)
     except config_parser.MissingConfigException:
         parser.error("The configuration file '{}' does not exist.".format(args.config))
+    if args.procs:
+        mw_parser.set_config_item("processes", args.procs)
     try:
         config = mw_parser.get_validated_config()
     except Exception:
@@ -477,6 +515,8 @@ def main():
 
     filters = set()
     marker_groups = defaultdict(list)
+
+    logging.info("Searching renders: %s", list(config['renders']))
 
     # collect all filters and get regionsets
     for rname, render in config['renders'].items():
@@ -501,8 +541,8 @@ def main():
         # get the regionset for this dimension
         rset = w.get_regionset(render['dimension'][1])
         if rset is None:    # indicates no such dimension was found:
-            logging.warn("Sorry, you requested dimension '%s' for the render '%s', but I couldn't "
-                         "find it.", render['dimension'][0], rname)
+            logging.warning("Sorry, you requested dimension '%s' for the render '%s', but I "
+                            "couldn't find it.", render['dimension'][0], rname)
             continue
         # List of regionsets that should be handled
         rsets = []
@@ -528,21 +568,23 @@ def main():
                 displayName=f['name'],
                 icon=f.get('icon', 'signpost_icon.png'),
                 createInfoWindow=f.get('createInfoWindow', True),
-                checked=f.get('checked', False))
+                checked=f.get('checked', False),
+                showIconInLegend=f.get('showIconInLegend', False))
             marker_groups[rname].append(group)
 
     # initialize the structure for the markers
     markers = dict((name, dict(created=False, raw=[], name=filter_name))
                    for name, filter_name, __, __, __, __ in filters)
 
+    all_rsets = set(map(lambda f: f[3], filters))
+    logging.info("Will search %s region sets using %s filters", len(all_rsets), len(filters))
+
     # apply filters to regionsets
     if not args.skipscan:
-        # group filters by rset
-        def keyfunc(x):
-            return x[3]
-        sfilters = sorted(filters, key=keyfunc)
-        for rset, rset_filters in itertools.groupby(sfilters, keyfunc):
-            handleEntities(rset, config, args.config, list(rset_filters), markers)
+        for rset in all_rsets:
+            rset_filters = list(filter(lambda f: f[3] == rset, filters))
+            logging.info("Calling handleEntities for %s with %s filters", rset, len(rset_filters))
+            handleEntities(rset, config, args.config, rset_filters, markers)
 
     # apply filters to players
     if not args.skipplayers:
@@ -574,11 +616,11 @@ def main():
 
     with open(os.path.join(destdir, "markersDB.js"), "w") as output:
         output.write("var markersDB=")
-        json.dump(markers, output, indent=2)
+        json.dump(markers, output, sort_keys=True, indent=2)
         output.write(";\n")
     with open(os.path.join(destdir, "markers.js"), "w") as output:
         output.write("var markers=")
-        json.dump(marker_groups, output, indent=2)
+        json.dump(marker_groups, output, sort_keys=True, indent=2)
         output.write(";\n")
     with open(os.path.join(destdir, "baseMarkers.js"), "w") as output:
         output.write("overviewer.util.injectMarkerScript('markersDB.js');\n")

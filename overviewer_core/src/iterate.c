@@ -130,7 +130,7 @@ bool load_chunk(RenderState* state, int32_t x, int32_t z, uint8_t required) {
     if (dest->loaded)
         return false;
 
-    /* set up reasonable defaults */
+    /* set reasonable defaults */
     dest->biomes = NULL;
     for (i = 0; i < SECTIONS_PER_CHUNK; i++) {
         dest->sections[i].blocks = NULL;
@@ -168,6 +168,7 @@ bool load_chunk(RenderState* state, int32_t x, int32_t z, uint8_t required) {
 
     dest->biomes = (PyArrayObject*)PyDict_GetItemString(chunk, "Biomes");
     Py_INCREF(dest->biomes);
+    dest->new_biomes = PyObject_IsTrue(PyDict_GetItemString(chunk, "NewBiomes"));
 
     for (i = 0; i < PySequence_Fast_GET_SIZE(sections); i++) {
         PyObject* ycoord = NULL;
@@ -312,43 +313,6 @@ generate_pseudo_data(RenderState* state, uint16_t ancilData) {
         }
         if ((above_level_data & 0x08)) { /* draw top right going up redstonewire */
             final_data = final_data | 0x10;
-        }
-        return final_data;
-
-    } else if (block_class_is_subset(state->block, (mc_block_t[]){block_chest, block_trapped_chest}, 2)) {
-        /* Orientation is given by ancilData, pseudo data needed to 
-         * choose from single or double chest and the correct half of
-         * the chest. */
-
-        /* Add two bits to ancilData to store single or double chest 
-          * and which half of the chest it is: bit 0x10 = second half
-          *                                    bit 0x8 = first half */
-
-        uint8_t chest_data = 0, final_data = 0;
-
-        /* search for adjacent chests of the same type */
-        chest_data = check_adjacent_blocks(state, x, y, z, state->block);
-
-        if (chest_data == 1) { /* another chest in the upper-left */
-            final_data = final_data | 0x10 | ancilData;
-
-        } else if (chest_data == 2) { /* in the bottom-left */
-            final_data = final_data | 0x8 | ancilData;
-
-        } else if (chest_data == 4) { /*in the bottom-right */
-            final_data = final_data | 0x8 | ancilData;
-
-        } else if (chest_data == 8) { /*in the upper-right */
-            final_data = final_data | 0x10 | ancilData;
-
-        } else if (chest_data == 0) {
-            /* Single chest, determine the orientation */
-            final_data = ancilData;
-
-        } else {
-            /* more than one adjacent chests! That shouldn't be 
-             * possible! render as normal chest */
-            return 0;
         }
         return final_data;
 

@@ -158,7 +158,7 @@ macOS
 #. Install Python 3 if you don't already have it, for example from `the official Python website <https://www.python.org/downloads/mac-osx/>`_.
 #. Install PIP, e.g. with::
 
-    sudo easy-install pip
+    sudo easy_install pip
 
 #. Install Pillow (overviewer needs PIL, Pillow is a fork of PIL that provides the same funcitonality)::
 
@@ -176,7 +176,7 @@ macOS
 #. In a terminal, change your current working directory to your overviewer-[Version] folder (e.g. by using ``cd Desktop/overviewer-[Version]``)
 #. Build::
 
-    PIL_INCLUDE_DIR="/path/to/Pillow-[version]/libImaging" python3 setup.py build
+    python3 setup.py build
 
 You should now be able to run Overviewer with ``./overviewer.py`` inside of the
 Overviewer directory.
