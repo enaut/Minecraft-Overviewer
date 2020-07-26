@@ -1,7 +1,7 @@
 Summary: Generates a map viewable with a webrowser.
 Name: minecraft-overviewer
 Version: 0.12
-Release: 27%{?dist}
+Release: 28%{?dist}
 Source0: %{name}-%{version}.tar.gz
 License: GNU General Public License v3
 Group: Development/Libraries
@@ -41,6 +41,129 @@ rm -rf %{buildroot}
 %doc README.rst COPYING.txt sample_config.py
 
 %changelog
+* Sun Jul 26 2020 Dietrich <dietrich@teilgedanken.de> 0.12-28
+- Make icons in legend OptIn (jmw.1906@gmx.de)
+- world: work around minecraft palette bugs (ovdev@fratti.ch)
+- build-tools: remove unused garbage (ovdev@fratti.ch)
+- overlay-mineral: fix tuple parse data type (ovdev@fratti.ch)
+- web_assets: make poi control icons look less bad (ovdev@fratti.ch)
+- docs/signs: fix escape example and add note (ovdev@fratti.ch)
+- Show the Overviewer version in the "welcome" message (achin@eminence32.net)
+- Add a FUNDING.yml for a sponsor button (ovdev@fratti.ch)
+- genPOI: fix dumb dimension handling mistake (ovdev@fratti.ch)
+- world: work around Minecraft lighting nonsense (ovdev@fratti.ch)
+- genPOI: code style fixes (ovdev@fratti.ch)
+- genPOI: fix handling of new dimension format (ovdev@fratti.ch)
+- world: retry chunk read on OSError too (ovdev@fratti.ch)
+- assetmanager: don't choke on existing icons dir (ovdev@fratti.ch)
+- assetmanager: rename icons dir to markers, symlink (ovdev@fratti.ch)
+- overviewer.h: Bump extension version (josephcamp1992@gmail.com)
+- Amend loom rendering (josephcamp1992@gmail.com)
+- Amend table block rendering (josephcamp1992@gmail.com)
+- Amend coarse dirt texture (josephcamp1992@gmail.com)
+- Add bell texture (josephcamp1992@gmail.com)
+- Add campfire texture (josephcamp1992@gmail.com)
+- Amend lectern rendering (josephcamp1992@gmail.com)
+- Amend stonecutter rendering (josephcamp1992@gmail.com)
+- Amend grindstone rendering (josephcamp1992@gmail.com)
+- Amend anvil texture generation (josephcamp1992@gmail.com)
+- Amend glazed terracotta rendering (josephcamp1992@gmail.com)
+- Amend observer rendering (josephcamp1992@gmail.com)
+- Amend shulker box rendering (josephcamp1992@gmail.com)
+- Add mushroom block & vine variants (josephcamp1992@gmail.com)
+- Fix chiseled sandstone rendering (josephcamp1992@gmail.com)
+- Amend (blast) furnace & smoker rendering (josephcamp1992@gmail.com)
+- Amend farmland rendering (josephcamp1992@gmail.com)
+- Fix cake rendering (josephcamp1992@gmail.com)
+- Amend redstone repeater delay rendering (josephcamp1992@gmail.com)
+- Amend structure block variant rendering (josephcamp1992@gmail.com)
+- Add Jigsaw block (josephcamp1992@gmail.com)
+- Fix cauldron water rendering (josephcamp1992@gmail.com)
+- Amend end portal frame rendering (josephcamp1992@gmail.com)
+- Add piston variant rendering & fix lighting (josephcamp1992@gmail.com)
+- Add colored beds & use bed facing/type properties (josephcamp1992@gmail.com)
+- add flowers and berries (programming18@verdunkelbar.de)
+- Update signs.rst to include additional notes about filtering based on block
+  entity data for chests (castus@gmail.com)
+- make 20w17a blockstate code cleaner (irath96@gmail.com)
+- world: add support for 20w17a blockstates (irath96@gmail.com)
+- remove __lt__ from RegionSet & wrapper as it's no longer used in genPOI
+  (cliff.meyers@gmail.com)
+- use logging.debug for detailed reporting of entities found during genPOI
+  (cliff.meyers@gmail.com)
+- fix a bug where multiple renders of the same world led to repeat genPOI scans
+  (cliff.meyers@gmail.com)
+- genPOI: apply consistent sorting to markers.js and markersDB.js
+  (cliff.meyers@gmail.com)
+- textures: better error logging for corrupt files (ovdev@fratti.ch)
+- Revert "textures: remove baffling texture generation logic" (ovdev@fratti.ch)
+- Add Icons to POI Legend (jmw.1906@gmx.de)
+- textures: remove baffling texture generation logic (ovdev@fratti.ch)
+- overviewer.h: bump extension version (ovdev@fratti.ch)
+- genPOI: polyline text improvements (ovdev@fratti.ch)
+- overviewer.h: bump extension version (ovdev@fratti.ch)
+- And the other location for the temporary variables
+  (danieljgrimwood@gmail.com)
+- travis: hopefully fix build by replacing 3.8-dev (ovdev@fratti.ch)
+- mmmm temporary variables (danieljgrimwood@gmail.com)
+- observer: minor change to LoggingObserver interval (ovdev@fratti.ch)
+- Add regiondir property to CroppedRegionSet (jmw.1906@gmx.de)
+- Fix chest rendering by using 'type' property (josephcamp1992@gmail.com)
+- Add Barrel Block (jmw.1906@gmx.de)
+- Track centers by layer instead of by world (cliff.meyers@gmail.com)
+- Fixes #1659 by testing both 8 and 9 for water blockid
+  (danieljgrimwood@gmail.com)
+- docs/running: fix leftover mention of 1.14 (ovdev@fratti.ch)
+- genpoi: add -p/--processes option for parity (ovdev@fratti.ch)
+- textures: clean up chest code (ovdev@fratti.ch)
+- 1.15 release preparations (ovdev@fratti.ch)
+- Updated Minecraft version for travis (gijs@oortgiese.com)
+- Add bee_hive, beenest, honeycom_block and honey_block
+  (gijs.oortgiese@digitpaint.nl)
+- Updated chests to support 1.15 textures (gijs@oortgiese.com)
+- nbt: small optimisation to list reading (ovdev@fratti.ch)
+- Fix construct requiring >=Python3.5 (sjr@jdns.org)
+- Completely change biome code again (ovdev@fratti.ch)
+- genPOI: support polylines and filled-in polygons (n@deltaidea.com)
+- world: fix door block translation code (ovdev@fratti.ch)
+- biome: actually use the full range of biome data (ovdev@fratti.ch)
+- biome: fix biome reading code (ovdev@fratti.ch)
+- biome: fix biomes for chunks at Y=16 (ovdev@fratti.ch)
+- biome: for Y -1, return the first biome (ovdev@fratti.ch)
+- fix various logging.warn calls (ovdev@fratti.ch)
+- Fix biomes for Minecraft 1.15 (ovdev@fratti.ch)
+- Fixed incorrect rendering of blocks (issue #1578)
+  (florian.graf@fmgsoftware.ch)
+- docs/building: don't need PIL_INCLUDE_DIR if you copy over files
+  (aargri@gmail.com)
+- docs/building: easy_install not easy-install (aargri@gmail.com)
+- Change lava ID from 10 to 11 (Fixes issue #1551) (robosphinx@gmail.com)
+- add composter (ian.salmons@gmail.com)
+- add bamboo (programming18@verdunkelbar.de)
+- observer: create outputdir if it doesn't exist (ovdev@fratti.ch)
+- add missing smooth_red_sandstone_stairs (programming18@verdunkelbar.de)
+- adapt id for bamboo sapling (programming18@verdunkelbar.de)
+- feat: added 1.14 scaffolding block (florian.graf@fmgsoftware.ch)
+- add new stone walls (programming18@verdunkelbar.de)
+- goToHash: set current layer before firing worldCtrl's onChange event so the
+  correct layer is added (andy@infinium.org.uk)
+- genPOI: handle more uuidcache.dat corruption (ovdev@fratti.ch)
+- Update Docs for Texture Install (castus@gmail.com)
+- tileset: fix changelist option for Python 3 (ovdev@fratti.ch)
+- world: also allow chunks of status "spawn" (ovdev@fratti.ch)
+- Created seperate sapling blocks and added bamboo_sapling (gijs@oortgiese.com)
+- Added sign variants added in 1.14 (gijs@oortgiese.com)
+- Implement new stairs fix stone stairs and slabs
+  (programming18@verdunkelbar.de)
+- Typo fix (Horcrux@users.noreply.github.com)
+- contrib: add empty __init__.py (ovdev@fratti.ch)
+- test: import relative to __init__.py (ovdev@fratti.ch)
+- Implement smooth sandstone stairs (ovdev@fratti.ch)
+-  Clarified overlay transparency instructions  (#1619)
+  (8080706+Gyzie@users.noreply.github.com)
+- Increase overviewer C extension version to 71 (ovdev@fratti.ch)
+- Lantern implemented (programming18@verdunkelbar.de)
+
 * Tue Jul 30 2019 Franz Dietrich <dietrich@teilgedanken.de> 0.12-27
 - fix mageia (dietrich@teilgedanken.de)
 
